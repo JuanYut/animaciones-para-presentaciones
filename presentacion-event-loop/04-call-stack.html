@@ -12,65 +12,19 @@
        Junto a la pila: el punto del hilo, siempre al lado del frame superior.
        Derecha abajo: zona de espera con el callback que no puede entrar. */
 
-    /* Contenedor de la pila: sin borde superior (por ahí entran y salen los frames) */
-    .pila {
-      position: absolute;
-      left: 120px;
-      top: 200px;
-      width: 400px;
-      height: 760px;
-      border: 4px solid var(--acento-suave);
-      border-top: none;
-      border-radius: 0 0 32px 32px;
-    }
-    /* Marca de entrada/salida arriba de la pila */
-    .pila__boca {
-      position: absolute;
-      left: 120px;
-      top: 200px;
-      width: 400px;
-      height: 4px;
-      background: repeating-linear-gradient(90deg,
-        var(--acento-suave) 0 16px, transparent 16px 32px);
-    }
-
-    /* Frame: una función en la pila. --i es su posición (0 = fondo).
-       Contorno = pausada esperando a la de arriba; relleno = la que el hilo ejecuta. */
-    .frame-cs {
+    /* Posiciones y tamaños (el aspecto está en shared) */
+    .cs .slide__pila      { left: 120px; top: 200px; width: 400px; height: 760px; }
+    .cs .slide__pila-boca { left: 120px; top: 200px; width: 400px; }
+    /* --i es la posición del frame en la pila (0 = fondo) */
+    .cs .slide__frame {
       --i: 0;
-      position: absolute;
       left: 140px;
       top: calc(850px - var(--i) * 100px);
       width: 360px;
       height: 90px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 28px;
-      border: 3px solid var(--acento);
-      border-radius: 16px;
-      background: var(--fondo);
-      color: var(--acento);
       font-size: 30px;
-      font-weight: 700;
-      visibility: hidden;
-      opacity: 0;
     }
-    .frame-cs svg { width: 48px; height: 48px; }
-
-    /* El hilo: punto que señala el frame que se está ejecutando */
-    .hilo-punto {
-      position: absolute;
-      left: 556px;
-      top: 881px;                /* centrado con el frame 0; GSAP lo sube con y */
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: var(--acento);
-      box-shadow: 0 0 24px var(--acento);
-      visibility: hidden;
-      opacity: 0;
-    }
+    .cs .slide__hilo-punto { left: 556px; top: 881px; }   /* centrado con el frame 0; GSAP lo sube con y */
 
     /* Callback esperando, abajo a la derecha */
     .cs__espera   { left: 660px; top: 760px; width: 360px; height: 170px; }
@@ -81,33 +35,33 @@
 
 <div class="stage stage--cuadrado stage--slide cs">
 
-  <div class="pila"></div>
-  <div class="pila__boca"></div>
+  <div class="slide__pila"></div>
+  <div class="slide__pila-boca"></div>
 
   <!-- Frames, del fondo hacia arriba. Cada uno con su anillo de progreso. -->
-  <div class="frame-cs" id="f-main" style="--i: 0"><span>BloqueCodigo</span>
+  <div class="slide__frame" id="f-main" style="--i: 0"><span>BloqueCodigo</span>
     <svg viewBox="0 0 40 40"><circle class="slide__anillo-fondo" cx="20" cy="20" r="15" stroke-width="5"/>
       <circle class="slide__anillo-arco" cx="20" cy="20" r="15" stroke-width="5" stroke-dasharray="94.25" stroke-dashoffset="94.25" transform="rotate(-90 20 20)"/></svg>
   </div>
-  <div class="frame-cs" id="f-a" style="--i: 1"><span>Fn1()</span>
+  <div class="slide__frame" id="f-a" style="--i: 1"><span>Fn1()</span>
     <svg viewBox="0 0 40 40"><circle class="slide__anillo-fondo" cx="20" cy="20" r="15" stroke-width="5"/>
       <circle class="slide__anillo-arco" cx="20" cy="20" r="15" stroke-width="5" stroke-dasharray="94.25" stroke-dashoffset="94.25" transform="rotate(-90 20 20)"/></svg>
   </div>
-  <div class="frame-cs" id="f-b" style="--i: 2"><span>Fn2()</span>
+  <div class="slide__frame" id="f-b" style="--i: 2"><span>Fn2()</span>
     <svg viewBox="0 0 40 40"><circle class="slide__anillo-fondo" cx="20" cy="20" r="15" stroke-width="5"/>
       <circle class="slide__anillo-arco" cx="20" cy="20" r="15" stroke-width="5" stroke-dasharray="94.25" stroke-dashoffset="94.25" transform="rotate(-90 20 20)"/></svg>
   </div>
-  <div class="frame-cs" id="f-c" style="--i: 3"><span>Fn3(callback)</span>
+  <div class="slide__frame" id="f-c" style="--i: 3"><span>Fn3(callback)</span>
     <svg viewBox="0 0 40 40"><circle class="slide__anillo-fondo" cx="20" cy="20" r="15" stroke-width="5"/>
       <circle class="slide__anillo-arco" cx="20" cy="20" r="15" stroke-width="5" stroke-dasharray="94.25" stroke-dashoffset="94.25" transform="rotate(-90 20 20)"/></svg>
   </div>
   <!-- El callback, cuando por fin entra, es un frame más (en el fondo, --i: 0) -->
-  <div class="frame-cs" id="f-cb" style="--i: 0"><span>callback()</span>
+  <div class="slide__frame" id="f-cb" style="--i: 0"><span>callback()</span>
     <svg viewBox="0 0 40 40"><circle class="slide__anillo-fondo" cx="20" cy="20" r="15" stroke-width="5"/>
       <circle class="slide__anillo-arco" cx="20" cy="20" r="15" stroke-width="5" stroke-dasharray="94.25" stroke-dashoffset="94.25" transform="rotate(-90 20 20)"/></svg>
   </div>
 
-  <div class="hilo-punto" id="hilo"></div>
+  <div class="slide__hilo-punto" id="hilo"></div>
 
   <div class="slide__espera cs__espera"></div>
   <div class="slide__callback cs__callback" id="cb">

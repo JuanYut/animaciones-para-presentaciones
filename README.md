@@ -18,6 +18,7 @@ y usan los colores de la slide invertidos: fondo `#1E1E1E` y elementos `#FFEA00`
 | `02-sincrono.html` | "JS es síncrono: el código se ejecuta línea por línea, en orden" | Cinco líneas de código abstractas; un cursor baja y cada línea se rellena de izquierda a derecha, una tras otra. Las hechas quedan atenuadas. |
 | `03-event-loop-callbacks.html` | "JS maneja asincronía con el Event Loop: los callbacks esperan a que el hilo esté libre. Callback: una FN que pasas a otra FN para que ésa la ejecute después" | La instrucción 1 lleva un callback `CB` encajado; al ejecutarse, el `CB` cae a la zona de espera con un anillo de progreso (la tarea lenta en curso) mientras el hilo sigue con 2 y 3; al completarse queda "listo" y espera. Cuando queda libre, el anillo del event loop lo sube al hilo y se ejecuta. |
 | `04-call-stack.html` | "Call Stack: es una pila LIFO; es donde se ven las funciones que el hilo está ejecutando; es bloqueante porque el hilo solo hace una cosa a la vez; es una visualización del trabajo del hilo, no quien controla el flujo" | Llamadas anidadas `BloqueCodigo → Fn1 → Fn2 → Fn3(callback)` entrando y saliendo por la boca de la pila (LIFO). Un punto (el hilo) señala el frame activo; los de abajo quedan pausados con su anillo a medias. `Fn3` tarda y el `CB` no puede entrar hasta que la pila se vacía; entonces corre como `callback()`. |
+| `05-event-loop.html` | "Event Loop: ciclo eterno que revisa si el Call Stack está vacío. Es el vigilante que coordina TODO. Sin él, JavaScript no sería asíncrono" | El anillo gira siempre; un vigía sale a revisar la pila y muestra ✗ (ocupada) o ✓ (vacía). Con ✓ y callbacks listos, el anillo lleva `CB1` y `CB2` a la pila. Luego el anillo se apaga: llega `CB3` y nadie lo mueve; cuando vuelve a encenderse, revisa, ✓, y `CB3` se ejecuta. |
 
 ## Otras animaciones (raíz)
 
@@ -69,7 +70,8 @@ animaciones-temporales/
 │   ├── 01-single-thread.html   ← una animación por slide, en orden
 │   ├── 02-sincrono.html
 │   ├── 03-event-loop-callbacks.html
-│   └── 04-call-stack.html
+│   ├── 04-call-stack.html
+│   └── 05-event-loop.html
 ├── call-stack.html
 ├── settimeout-web-apis.html
 ├── microtasks-vs-macrotasks.html

@@ -162,6 +162,47 @@ html, body {
    Toma el color del texto del elemento que lo contiene. */
 .slide__anillo-fondo { fill: none; stroke: currentColor; opacity: 0.25; }
 .slide__anillo-arco  { fill: none; stroke: currentColor; stroke-linecap: round; }
+/* Call Stack: contenedor abierto por arriba (por ahí entran y salen los frames) */
+.slide__pila {
+  position: absolute;
+  border: 4px solid var(--acento-suave);
+  border-top: none;
+  border-radius: 0 0 32px 32px;
+}
+/* Marca punteada de la boca de la pila */
+.slide__pila-boca {
+  position: absolute;
+  height: 4px;
+  background: repeating-linear-gradient(90deg,
+    var(--acento-suave) 0 16px, transparent 16px 32px);
+}
+/* Frame: una función en la pila. Contorno = pausada; relleno = la que el hilo ejecuta */
+.slide__frame {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  border: 3px solid var(--acento);
+  border-radius: 16px;
+  background: var(--fondo);
+  color: var(--acento);
+  font-weight: 700;
+  visibility: hidden;
+  opacity: 0;
+}
+.slide__frame svg { width: 48px; height: 48px; }
+/* El hilo: punto brillante que señala el frame que se está ejecutando */
+.slide__hilo-punto {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--acento);
+  box-shadow: 0 0 24px var(--acento);
+  visibility: hidden;
+  opacity: 0;
+}
 /* Anillo del event loop en tema slide */
 .stage--slide .event-loop__anillo {
   border-color: var(--acento-suave);
