@@ -63,6 +63,18 @@
       font-style: italic;
       font-weight: 500;
     }
+    /* Anillo de progreso de la tarea lenta (timer, red...), en la esquina del ƒ */
+    .async__timer {
+      position: absolute;
+      top: -20px;
+      right: -20px;
+      width: 48px;
+      height: 48px;
+      visibility: hidden;
+      opacity: 0;
+    }
+    .async__timer-fondo { fill: var(--fondo); stroke: var(--acento-suave); }
+    .async__timer-arco  { fill: none; stroke: var(--acento); stroke-linecap: round; }
 
     /* Anillo del event loop, centrado en (540, 545) */
     .async .event-loop { left: 480px; top: 485px; }
@@ -98,7 +110,15 @@
   <div class="slide__bloque" id="b3">3</div>
 
   <!-- El callback (se dibuja después para quedar encima de la instrucción 1) -->
-  <div class="async__callback" id="cb">ƒ</div>
+  <div class="async__callback" id="cb">
+    ƒ
+    <!-- Círculo de 15px de radio: perímetro 2·π·15 ≈ 94.25 (= stroke-dasharray) -->
+    <svg class="async__timer" viewBox="0 0 40 40">
+      <circle class="async__timer-fondo" cx="20" cy="20" r="15" stroke-width="5"/>
+      <circle class="async__timer-arco" id="arco" cx="20" cy="20" r="15" stroke-width="5"
+              stroke-dasharray="94.25" stroke-dashoffset="94.25" transform="rotate(-90 20 20)"/>
+    </svg>
+  </div>
 
   <div class="event-loop">
     <div class="event-loop__anillo" id="anillo"></div>
@@ -128,6 +148,7 @@
   const stage = document.querySelector('.stage');
   const slot = $('slot'), progreso = $('progreso'), anillo = $('anillo');
   const b1 = $('b1'), b2 = $('b2'), b3 = $('b3'), cb = $('cb');
+  const timer = cb.querySelector('.async__timer'), arco = $('arco');
 
   // Colores leídos del CSS (GSAP necesita el valor literal para animar el borde)
   const ACENTO       = getComputedStyle(stage).getPropertyValue('--acento').trim();
@@ -145,6 +166,7 @@
   const CB_ESPERA  = { x: -60, y: 525 };
   const CB_SLOT    = { x: -60, y: 0 };
   const T_EJECUTA  = 0.9;   // segundos que tarda cada instrucción
+  const T_TAREA    = 2.6;   // segundos que tarda la tarea lenta del callback (anillo)
   const VUELTAS_POR_SEG = 0.5; // velocidad del anillo del event loop
 
   // Estado inicial: fila a la izquierda, callback encajado en la instrucción 1
@@ -186,20 +208,37 @@
   mover(b3, X_TRAS_B1.b3, '<');
   const t1 = ejecutar(b1);
 
-  // Mientras se ejecuta, el callback se desprende y cae a la zona de espera
+  // Mientras se ejecuta, el callback se desprende y cae a la zona de espera.
+  // Al caer queda "pendiente": contorno punteado y un anillo que se llena
+  // mientras la tarea lenta (timer, petición...) está en curso.
   tl.addLabel('callback-espera', t1 + 0.3);
   tl.to(cb, { ...CB_ESPERA, duration: DUR.lenta, ease: EASE.mover }, t1 + 0.3);
+  const tCae = t1 + 0.3 + DUR.lenta;
 
-  // 2) y 3) El hilo sigue con las instrucciones síncronas; el callback espera
+  // 2) y 3) El hilo sigue con las instrucciones síncronas sin bloquearse
   tl.addLabel('instruccion-2');
   mover(b2, 0);
   mover(b3, X_ESPERA_1, '<');
-  const t2 = ejecutar(b2);
-  tl.to(cb, { opacity: 0.45, duration: 0.35, repeat: 3, yoyo: true, ease: "sine.inOut" }, t2);
+  ejecutar(b2);
 
   tl.addLabel('instruccion-3');
   mover(b3, 0);
   ejecutar(b3);
+
+  // El anillo de la tarea lenta corre en paralelo a las instrucciones 2 y 3.
+  // (Se agrega aquí, con posición absoluta, para que su duración no empuje
+  // lo que se anexa al final de la timeline.)
+  tl.set(cb, { borderStyle: 'dashed' }, tCae);
+  tl.to(timer, { autoAlpha: 1, duration: DUR.rapida }, tCae);
+  tl.fromTo(arco, { strokeDashoffset: 94.25 }, { strokeDashoffset: 0, duration: T_TAREA, ease: 'none' }, tCae);
+
+  // La tarea lenta termina: el callback queda listo (contorno sólido, pequeño
+  // salto) y ahora sí espera a que el hilo se libere.
+  const tListo = tCae + T_TAREA;
+  tl.addLabel('callback-listo', tListo);
+  tl.to(timer, { autoAlpha: 0, duration: DUR.rapida }, tListo);
+  tl.set(cb, { borderStyle: 'solid' }, tListo);
+  tl.to(cb, { scale: 1.15, duration: DUR.rapida, repeat: 1, yoyo: true, ease: 'sine.inOut' }, tListo);
 
   // 4) Hilo libre: el event loop lo nota (el anillo late)
   tl.addLabel('hilo-libre');
@@ -210,6 +249,15 @@
   tl.addLabel('callback-ejecuta');
   tl.to(cb, { ...CB_SLOT, duration: DUR.lenta, ease: EASE.mover });
   ejecutar(cb);
+
+  // Entre "listo" y "ejecuta", el callback palpita esperando. Se calcula
+  // cuántos ciclos caben para que termine justo antes de subir al hilo.
+  const tEjecuta = tl.labels['callback-ejecuta'];
+  const ciclos = Math.floor((tEjecuta - tListo - DUR.rapida * 2) / 0.7);
+  if (ciclos > 0) {
+    tl.to(cb, { opacity: 0.45, duration: 0.35, repeat: ciclos * 2 - 1, yoyo: true, ease: 'sine.inOut' },
+      tListo + DUR.rapida * 2);
+  }
 
   tl.addLabel('fin');
   esperar(tl, DUR.margen);
