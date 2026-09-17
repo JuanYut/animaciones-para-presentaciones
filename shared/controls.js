@@ -30,13 +30,15 @@ const EASE = {
 };
 
 /* ---------- 2. Ajuste del escenario ----------
-   El .stage mide siempre 1920x1080; aquí lo escalamos para que quepa en la
-   ventana sin deformarse. Al grabar en pantalla completa 1920x1080 la escala
-   será exactamente 1. */
+   El .stage tiene un tamaño fijo en píxeles (1920x1080, o 1080x1080 con
+   .stage--cuadrado); aquí lo escalamos para que quepa en la ventana sin
+   deformarse. Al grabar en pantalla completa con la misma resolución la
+   escala será exactamente 1. */
 function ajustarEscenario() {
   const stage = document.querySelector('.stage');
   if (!stage) return;
-  const escala = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+  const escala = Math.min(window.innerWidth / stage.offsetWidth,
+                          window.innerHeight / stage.offsetHeight);
   stage.style.transform = `translate(-50%, -50%) scale(${escala})`;
 }
 window.addEventListener('resize', ajustarEscenario);

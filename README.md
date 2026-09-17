@@ -15,6 +15,7 @@ Sin frameworks, sin bundlers, sin servidor.
 | `02-settimeout-web-apis.html` | Un `setTimeout` viaja del stack a Web APIs (temporizador visual), a la Callback Queue y el event loop lo regresa al stack cuando está vacío. |
 | `03-microtasks-vs-macrotasks.html` | `setTimeout` y `Promise.resolve().then()` en el mismo código: la microtask se ejecuta primero. |
 | `04-orden-console-log.html` | El ejercicio clásico de adivinar el orden de salida mezclando `console.log`, `setTimeout(…, 0)` y Promises. |
+| `05-single-thread.html` | Para la slide "JS es single-threaded": una sola vía, las instrucciones entran al hilo de una en una. Escenario **cuadrado 1080×1080**, fondo `#1E1E1E` y acento `#FFEA00` a juego con la slide. |
 
 ## Cómo abrir
 
@@ -36,7 +37,7 @@ No hay ningún control visible en pantalla durante la grabación. La pista
 
 ## Tips para grabar
 
-- **Tamaño de ventana:** el escenario mide 1920×1080 y se escala para caber en la ventana manteniendo 16:9. Para obtener píxeles exactos, usa un monitor 1920×1080 en pantalla completa (`F11` en el navegador); así la escala es exactamente 1.
+- **Tamaño de ventana:** el escenario mide 1920×1080 (1080×1080 en las cuadradas, que se graban recortando el centro de la pantalla) y se escala para caber en la ventana manteniendo 16:9. Para obtener píxeles exactos, usa un monitor 1920×1080 en pantalla completa (`F11` en el navegador); así la escala es exactamente 1.
 - **Zoom del navegador al 100 %** (`Ctrl + 0`) antes de grabar.
 - **Cada timeline empieza y termina con 1 segundo de quietud** para que sea fácil recortar el clip.
 - **Repetir tomas:** pulsa `R` para volver al inicio sin recargar la página.
@@ -54,6 +55,7 @@ animaciones-event-loop/
 ├── 02-settimeout-web-apis.html
 ├── 03-microtasks-vs-macrotasks.html
 ├── 04-orden-console-log.html
+├── 05-single-thread.html   ← cuadrada, para una slide
 ├── index.html          ← links a cada animación
 ├── README.md
 └── .gitignore
