@@ -1,0 +1,369 @@
+/* ============================================================
+   shared/styles.css
+   Estilos comunes para todas las animaciones del Event Loop.
+
+   Secciones:
+     1. Variables (paleta, tipografía, medidas)  ← cambia colores aquí
+     2. Escenario 1920x1080 escalable
+     3. Panel de código (izquierda)
+     4. Paneles del runtime (Call Stack, Web APIs, colas, consola)
+     5. Event loop (ícono circular)
+     6. Ayuda de teclado y pista
+     7. Página índice
+   ============================================================ */
+
+/* ---------- 1. Variables ---------- */
+:root {
+  /* Fondos y texto */
+  --bg-exterior: #07080c;      /* fuera del escenario */
+  --bg-escenario: #0f1117;     /* fondo del escenario 16:9 */
+  --bg-panel: #161a23;
+  --borde-panel: #262b38;
+  --texto: #e8eaf0;
+  --texto-suave: #8b93a7;
+
+  /* Colores por componente del runtime (consistentes en todas las animaciones) */
+  --color-stack: #f5a524;      /* Call Stack ........ ámbar    */
+  --color-webapi: #4f8cff;     /* Web APIs .......... azul     */
+  --color-micro: #b56bff;      /* Microtask Queue ... violeta  */
+  --color-macro: #ff5d8f;      /* Callback/Macrotask  rosa     */
+  --color-consola: #2dd4bf;    /* Consola ........... turquesa */
+  --color-loop: #ffffff;       /* Event loop ........ blanco   */
+
+  /* Resaltado de sintaxis del código */
+  --sx-keyword: #c792ea;
+  --sx-funcion: #82aaff;
+  --sx-string: #c3e88d;
+  --sx-numero: #f78c6c;
+  --sx-comentario: #5c6370;
+
+  /* Tipografía */
+  --fuente-ui: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --fuente-codigo: 'JetBrains Mono', 'Cascadia Code', 'Fira Code', Consolas, 'Courier New', monospace;
+
+  /* Medidas */
+  --alto-linea: 46px;          /* alto de cada línea de código (caben 16 líneas) */
+  --alto-frame: 72px;          /* alto de un frame en el stack */
+  --gap-frame: 12px;           /* separación entre frames */
+  --ancho-item: 300px;         /* ancho de un item en las colas */
+  --gap-item: 16px;
+  --radio: 16px;
+  --padding-panel: 24px;
+}
+
+/* ---------- 2. Escenario ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg-exterior);
+  color: var(--texto);
+  font-family: var(--fuente-ui);
+  overflow: hidden;
+}
+
+/* Contenedor fijo de 1920x1080; controls.js lo escala con transform para
+   que quepa en la ventana manteniendo 16:9. */
+.stage {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1920px;
+  height: 1080px;
+  transform: translate(-50%, -50%) scale(1);
+  transform-origin: center center;
+  background: var(--bg-escenario);
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 32px;
+  padding: 56px 64px;
+}
+
+/* Título superior de la escena */
+.titulo {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  font-size: 40px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.titulo__numero {
+  font-family: var(--fuente-codigo);
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--texto-suave);
+  border: 2px solid var(--borde-panel);
+  border-radius: 999px;
+  padding: 6px 16px;
+}
+
+/* Distribución: código a la izquierda, runtime a la derecha */
+.escena {
+  display: grid;
+  grid-template-columns: 780px 1fr;
+  gap: 48px;
+  min-height: 0;
+}
+
+/* Columna derecha: apila paneles verticalmente */
+.runtime {
+  display: grid;
+  gap: 32px;
+  min-height: 0;
+}
+
+/* ---------- 3. Panel de código ---------- */
+.panel {
+  --c: var(--texto-suave);     /* color de acento del panel (se sobreescribe) */
+  background: var(--bg-panel);
+  border: 2px solid var(--borde-panel);
+  border-radius: var(--radio);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+.panel__titulo {
+  padding: 18px var(--padding-panel);
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--c);
+  border-bottom: 2px solid var(--borde-panel);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.panel__titulo::before {
+  content: '';
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--c);
+  box-shadow: 0 0 16px var(--c);
+}
+.panel__cuerpo {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  padding: var(--padding-panel);
+}
+
+.codigo {
+  position: relative;
+  margin: 0;
+  font-family: var(--fuente-codigo);
+  font-size: 28px;
+  line-height: var(--alto-linea);
+  counter-reset: linea;
+  white-space: normal;   /* los saltos de línea del HTML no cuentan */
+}
+/* Barra que resalta la línea en ejecución (la mueve GSAP con `y`) */
+.codigo__resaltado {
+  display: block;
+  position: absolute;
+  left: -12px;
+  right: -12px;
+  top: 0;
+  height: var(--alto-linea);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--color-stack) 16%, transparent);
+  border-left: 5px solid var(--color-stack);
+  visibility: hidden;
+  opacity: 0;
+}
+.linea {
+  display: block;
+  position: relative;
+  min-height: var(--alto-linea);   /* las líneas vacías conservan su alto */
+  padding-left: 84px;
+  white-space: pre;                /* conserva la indentación */
+}
+.linea::before {
+  counter-increment: linea;
+  content: counter(linea);
+  position: absolute;
+  left: 0;
+  width: 48px;
+  text-align: right;
+  color: var(--texto-suave);
+  opacity: 0.6;
+}
+/* Tokens de sintaxis */
+.kw  { color: var(--sx-keyword); }
+.fn  { color: var(--sx-funcion); }
+.str { color: var(--sx-string); }
+.num { color: var(--sx-numero); }
+.cm  { color: var(--sx-comentario); font-style: italic; }
+
+/* ---------- 4. Paneles del runtime ---------- */
+.panel--stack   { --c: var(--color-stack); }
+.panel--webapi  { --c: var(--color-webapi); }
+.panel--micro   { --c: var(--color-micro); }
+.panel--macro   { --c: var(--color-macro); }
+.panel--consola { --c: var(--color-consola); }
+
+/* Frames del Call Stack: se apilan de abajo hacia arriba según --i */
+.frame {
+  --c: var(--color-stack);
+  position: absolute;
+  left: var(--padding-panel);
+  right: var(--padding-panel);
+  bottom: calc(var(--padding-panel) + var(--i, 0) * (var(--alto-frame) + var(--gap-frame)));
+  height: var(--alto-frame);
+  display: flex;
+  align-items: center;
+  padding: 0 28px;
+  font-family: var(--fuente-codigo);
+  font-size: 28px;
+  color: var(--texto);
+  background: color-mix(in srgb, var(--c) 18%, transparent);
+  border: 2px solid var(--c);
+  border-radius: 12px;
+  visibility: hidden;   /* GSAP lo muestra con autoAlpha */
+  opacity: 0;
+}
+
+/* Items de Web APIs y colas: se colocan de izquierda a derecha según --i */
+.item {
+  --c: var(--color-macro);
+  position: absolute;
+  left: calc(var(--padding-panel) + var(--i, 0) * (var(--ancho-item) + var(--gap-item)));
+  top: 50%;
+  transform: translateY(-50%);
+  width: var(--ancho-item);
+  height: var(--alto-frame);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  font-family: var(--fuente-codigo);
+  font-size: 26px;
+  background: color-mix(in srgb, var(--c) 18%, transparent);
+  border: 2px solid var(--c);
+  border-radius: 12px;
+  visibility: hidden;
+  opacity: 0;
+}
+.item--webapi { --c: var(--color-webapi); }
+.item--micro  { --c: var(--color-micro); }
+.item--macro  { --c: var(--color-macro); }
+
+/* Temporizador visual dentro de un item de Web APIs */
+.temporizador {
+  font-size: 22px;
+  color: var(--c);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Consola: líneas en flujo normal, ocultas hasta que GSAP las muestre */
+.consola {
+  font-family: var(--fuente-codigo);
+  font-size: 28px;
+  line-height: 1.9;
+}
+.consola__linea {
+  display: flex;
+  gap: 16px;
+  visibility: hidden;
+  opacity: 0;
+}
+.consola__linea::before {
+  content: '>';
+  color: var(--color-consola);
+  opacity: 0.7;
+}
+
+/* ---------- 5. Event loop ---------- */
+.event-loop {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  display: grid;
+  place-items: center;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--texto-suave);
+}
+.event-loop__anillo {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 6px solid var(--borde-panel);
+  border-top-color: var(--color-loop);
+}
+
+/* ---------- 6. Ayuda de teclado y pista ---------- */
+.ayuda {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: grid;
+  place-items: center;
+  background: rgba(7, 8, 12, 0.8);
+  backdrop-filter: blur(6px);
+}
+.ayuda.oculto { display: none; }
+.ayuda__tarjeta {
+  background: var(--bg-panel);
+  border: 2px solid var(--borde-panel);
+  border-radius: var(--radio);
+  padding: 40px 56px;
+  min-width: 620px;
+}
+.ayuda__tarjeta h2 { margin: 0 0 24px; font-size: 32px; }
+.ayuda__tarjeta table { border-collapse: collapse; font-size: 24px; }
+.ayuda__tarjeta td { padding: 10px 24px 10px 0; }
+.ayuda__tarjeta kbd {
+  font-family: var(--fuente-codigo);
+  font-size: 20px;
+  padding: 6px 14px;
+  border: 2px solid var(--borde-panel);
+  border-bottom-width: 4px;
+  border-radius: 8px;
+  background: var(--bg-escenario);
+}
+
+/* Pista discreta que desaparece al pulsar Espacio por primera vez */
+.pista {
+  position: absolute;
+  right: 32px;
+  bottom: 24px;
+  font-size: 18px;
+  color: var(--texto-suave);
+  opacity: 0.6;
+}
+.pista.oculto { display: none; }
+
+/* ---------- 7. Página índice ---------- */
+body.pagina-indice { overflow: auto; }
+.indice {
+  max-width: 720px;
+  margin: 12vh auto;
+  padding: 0 24px;
+}
+.indice h1 { font-size: 40px; margin-bottom: 8px; }
+.indice p  { color: var(--texto-suave); margin-top: 0; }
+.indice ol { list-style: none; padding: 0; display: grid; gap: 12px; }
+.indice a {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px 24px;
+  background: var(--bg-panel);
+  border: 2px solid var(--borde-panel);
+  border-left: 6px solid var(--c);
+  border-radius: 12px;
+  color: var(--texto);
+  text-decoration: none;
+  font-size: 20px;
+  transition: border-color 0.2s, transform 0.2s;
+}
+.indice a:hover { border-color: var(--c); transform: translateX(4px); }
+.indice a code { font-family: var(--fuente-codigo); color: var(--texto-suave); font-size: 16px; }
