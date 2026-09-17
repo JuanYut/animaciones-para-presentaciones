@@ -21,6 +21,8 @@ y usan los colores de la slide invertidos: fondo `#1E1E1E` y elementos `#FFEA00`
 | `05-event-loop.html` | "Event Loop: ciclo eterno que revisa si el Call Stack está vacío. Es el vigilante que coordina TODO. Sin él, JavaScript no sería asíncrono" | El anillo gira siempre; un vigía sale a revisar la pila y muestra ✗ (ocupada) o ✓ (vacía). Con ✓ y callbacks listos, el anillo lleva `CB1` y `CB2` a la pila. Luego el anillo se apaga: `CB3` sigue en la fila y nadie lo mueve; cuando vuelve a encenderse, revisa, ✓, y `CB3` se ejecuta. |
 | `06-web-apis.html` | "Web APIs: no son parte de JS. Servicios del navegador que hacen trabajo en paralelo. Timers, Network, DOM" | Caja "JS · 1 hilo" a la izquierda con su único hilo ocupado; frontera punteada; a la derecha "Navegador · en paralelo" con tres tarjetas (Timers, Network, DOM) cuyos anillos se llenan al mismo tiempo, cada uno a su ritmo, y terminan con ✓. |
 | `07-web-apis-categorias.html` | "4 categorías importantes de Web APIs: Timers, Network, DOM/Events, Promises (JS puro)" | Cuadrícula 2×2 de tarjetas con ícono, nombre y APIs, ya en pantalla desde el inicio. **Ciclo infinito de 9 s** (sin márgenes): reloj girando, flechas de red, click con onda en un botón, promesa que pasa de reloj a ✓. Para un GIF sin salto, recorta exactamente un ciclo. La de Promises va punteada con la etiqueta "JS puro". |
+| `08-macrotask-queue.html` | "Macrotask Queue: cola para Web APIs. Se ejecuta UNO por ciclo. Prioridad BAJA" + ejemplos | Cola con `setTimeout`, `setInterval`, `fetch`, `click`, `XHR`. En cada ciclo (contador bajo el anillo) el event loop lleva **una sola** tarea al Call Stack; corre tres ciclos y dos quedan esperando. |
+| `09-microtask-queue.html` | "Microtask Queue: cola para Promises. Se ejecuta TODOS por ciclo. Prioridad ALTA" + ejemplos | Cola con `.then`, `.catch`, `.finally`, `.then` y, abajo, una macrotarea `setTimeout` atenuada. En el ciclo 1 el loop vacía **todas** las microtareas seguidas; solo en el ciclo 2 toca `setTimeout`. |
 
 ## Otras animaciones (raíz)
 
@@ -75,7 +77,9 @@ animaciones-temporales/
 │   ├── 04-call-stack.html
 │   ├── 05-event-loop.html
 │   ├── 06-web-apis.html
-│   └── 07-web-apis-categorias.html
+│   ├── 07-web-apis-categorias.html
+│   ├── 08-macrotask-queue.html
+│   └── 09-microtask-queue.html
 ├── call-stack.html
 ├── settimeout-web-apis.html
 ├── microtasks-vs-macrotasks.html

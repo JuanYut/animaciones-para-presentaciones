@@ -152,6 +152,20 @@ html, body {
 }
 .slide__callback-titulo { font-size: 38px; font-weight: 700; line-height: 1; }
 .slide__callback-sub    { font-size: 13px; font-weight: 500; letter-spacing: 0.04em; opacity: 0.8; }
+/* Tarea en una cola (macrotask / microtask): caja con el nombre de la API */
+.slide__tarea {
+  position: absolute;
+  width: 170px;
+  height: 80px;
+  display: grid;
+  place-items: center;
+  border: 3px solid var(--acento);
+  border-radius: 16px;
+  background: var(--fondo);
+  color: var(--acento);
+  font-size: 20px;
+  font-weight: 700;
+}
 /* Zona de espera de callbacks (punteada) */
 .slide__espera {
   position: absolute;
