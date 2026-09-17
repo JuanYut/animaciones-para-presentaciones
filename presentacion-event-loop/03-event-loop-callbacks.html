@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>03 · Event Loop y callbacks</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,500;0,700;1,500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../shared/styles.css">
   <style>
     /* ---------- Disposición de la escena ----------
@@ -23,8 +23,8 @@
         var(--acento-suave) 0 24px, transparent 24px 40px);
     }
 
-    /* Slot centrado en (540, 300) */
-    .async .slide__slot { left: 420px; top: 180px; width: 240px; height: 240px; }
+    /* Slot centrado en (540, 300); más ancho que alto para que quepa la instrucción 1 */
+    .async .slide__slot { left: 380px; top: 180px; width: 320px; height: 240px; }
 
     /* Instrucciones: parten centradas en el slot, GSAP las mueve con `x` */
     .async .slide__bloque { left: 475px; top: 235px; }
@@ -45,8 +45,8 @@
       border-radius: 18px;
     }
 
-    /* El callback: una función (ƒ) con contorno, para distinguirla de las
-       instrucciones normales. Parte encajada en el hueco de la instrucción 1. */
+    /* El callback: "CB" con contorno, para distinguirlo de las instrucciones
+       normales. Parte encajado en el hueco de la instrucción 1. */
     .async__callback {
       position: absolute;
       left: 550px;
@@ -54,16 +54,17 @@
       width: 100px;
       height: 100px;
       display: grid;
-      place-items: center;
+      align-content: center;
+      justify-items: center;
+      gap: 2px;
       border: 4px solid var(--acento);
       border-radius: 18px;
       background: var(--fondo);
       color: var(--acento);
-      font-size: 52px;
-      font-style: italic;
-      font-weight: 500;
     }
-    /* Anillo de progreso de la tarea lenta (timer, red...), en la esquina del ƒ */
+    .async__cb-titulo { font-size: 38px; font-weight: 700; line-height: 1; }
+    .async__cb-sub    { font-size: 13px; font-weight: 500; letter-spacing: 0.04em; opacity: 0.8; }
+    /* Anillo de progreso de la tarea lenta (timer, red...), en la esquina del CB */
     .async__timer {
       position: absolute;
       top: -20px;
@@ -111,7 +112,8 @@
 
   <!-- El callback (se dibuja después para quedar encima de la instrucción 1) -->
   <div class="async__callback" id="cb">
-    ƒ
+    <span class="async__cb-titulo">CB</span>
+    <span class="async__cb-sub">Callback</span>
     <!-- Círculo de 15px de radio: perímetro 2·π·15 ≈ 94.25 (= stroke-dasharray) -->
     <svg class="async__timer" viewBox="0 0 40 40">
       <circle class="async__timer-fondo" cx="20" cy="20" r="15" stroke-width="5"/>
@@ -156,12 +158,12 @@
 
   // ---------- Medidas y tiempos de esta escena ----------
   // Desplazamientos en x respecto a la posición "dentro del slot" (x = 0).
-  const X_ESPERA_1 = -215;  // primer lugar de la fila, pegado al slot
-  const X_ESPERA_2 = -375;  // segundo lugar
+  const X_ESPERA_1 = -255;  // primer lugar de la fila, pegado al slot
+  const X_ESPERA_2 = -415;  // segundo lugar
   const X_SALIDA   = 700;   // fuera del cuadrado, por la derecha
   // Posiciones iniciales (la instrucción 1 es más ancha, por eso difieren)
-  const X_INICIO   = { b1: -275, b2: -495, b3: -655 };
-  const X_TRAS_B1  = { b2: -220, b3: -380 };   // fila cuando la 1 está en el slot
+  const X_INICIO   = { b1: -320, b2: -545, b3: -705 };
+  const X_TRAS_B1  = { b2: -225, b3: -385 };   // fila cuando la 1 está en el slot
   // El callback: cae a la zona de espera y luego sube al slot
   const CB_ESPERA  = { x: -60, y: 525 };
   const CB_SLOT    = { x: -60, y: 0 };
