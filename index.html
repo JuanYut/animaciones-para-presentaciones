@@ -10,26 +10,24 @@
 <body class="pagina-indice">
 
 <main class="indice">
-  <h1>Event Loop de JavaScript</h1>
-  <p>Animaciones para la presentación. Abre una, pulsa <strong>Espacio</strong> para empezar y <strong>H</strong> para ver los controles.</p>
+  <h1>Presentación: Event Loop</h1>
+  <p>Animaciones cuadradas para las slides. Abre una, pulsa <strong>Espacio</strong> para empezar y <strong>H</strong> para ver los controles.</p>
 
+  <!-- Una entrada por slide, en orden de aparición en la presentación -->
   <ol>
-    <li><a href="01-call-stack.html" style="--c: var(--color-stack)">
-      <code>01</code> Call Stack: funciones anidadas
-    </a></li>
-    <li><a href="02-settimeout-web-apis.html" style="--c: var(--color-webapi)">
-      <code>02</code> setTimeout y Web APIs
-    </a></li>
-    <li><a href="03-microtasks-vs-macrotasks.html" style="--c: var(--color-micro)">
-      <code>03</code> Microtasks vs Macrotasks
-    </a></li>
-    <li><a href="04-orden-console-log.html" style="--c: var(--color-consola)">
-      <code>04</code> ¿En qué orden se imprime?
-    </a></li>
-    <li><a href="05-single-thread.html" style="--c: #FFEA00">
-      <code>05</code> JS es single-threaded (cuadrado, para slide)
+    <li><a href="presentacion-event-loop/01-single-thread.html" style="--c: #FFEA00">
+      <code>01</code> JS es single-threaded
     </a></li>
   </ol>
+
+  <!-- Animaciones sueltas del runtime (código + paneles), sin numerar -->
+  <h2>Otras animaciones</h2>
+  <nav class="indice__fila">
+    <a href="call-stack.html" style="--c: var(--color-stack)">Call Stack</a>
+    <a href="settimeout-web-apis.html" style="--c: var(--color-webapi)">setTimeout y Web APIs</a>
+    <a href="microtasks-vs-macrotasks.html" style="--c: var(--color-micro)">Microtasks vs Macrotasks</a>
+    <a href="orden-console-log.html" style="--c: var(--color-consola)">Orden de console.log</a>
+  </nav>
 </main>
 
 </body>

@@ -376,3 +376,8 @@ body.pagina-indice { overflow: auto; }
 }
 .indice a:hover { border-color: var(--c); transform: translateX(4px); }
 .indice a code { font-family: var(--fuente-codigo); color: var(--texto-suave); font-size: 16px; }
+.indice h2 { font-size: 20px; color: var(--texto-suave); margin: 40px 0 12px; }
+/* Fila compacta de enlaces secundarios */
+.indice__fila { display: flex; flex-wrap: wrap; gap: 12px; }
+.indice__fila a { padding: 12px 18px; font-size: 16px; }
+.indice__fila a:hover { transform: none; }
