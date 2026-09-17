@@ -11,15 +11,18 @@
        Queue a la derecha; Consola abajo a lo ancho. */
     .runtime {
       grid-template-columns: 1fr 1fr;
-      grid-template-rows: 1fr 1fr 250px;
+      grid-template-rows: 110px 1fr 1fr 250px;
     }
-    .panel--stack   { grid-row: 1 / 3; }
+    .panel--loop    { grid-column: 1 / 3; }
+    .panel--stack   { grid-row: 2 / 4; }
     .panel--consola { grid-column: 1 / 3; }
 
-    /* El anillo del event loop, entre el Call Stack y la Macrotask Queue */
-    .ej .event-loop { left: 1316px; top: 430px; }
-    .ej .event-loop__anillo { border-width: 8px; }
-    .ej .event-loop__texto { font-size: 15px; }
+    /* Barra del Event Loop: título a la izquierda, anillo girando a la derecha */
+    .panel--loop .panel__titulo { border-bottom: none; height: 100%; font-size: 26px; }
+    .panel--loop .panel__titulo span { margin-right: auto; }   /* texto a la izquierda, anillo a la derecha */
+    .panel--loop .event-loop { position: static; width: 64px; height: 64px; }
+    .panel--loop .event-loop__anillo { border-width: 6px; }
+
   </style>
 </head>
 <body>
@@ -49,6 +52,13 @@
 
     <!-- ===== Derecha: runtime ===== -->
     <div class="runtime">
+
+      <section class="panel panel--loop">
+        <div class="panel__titulo">
+          <span>Event Loop · orquesta todo</span>
+          <div class="event-loop" id="loop"><div class="event-loop__anillo" id="anillo"></div></div>
+        </div>
+      </section>
 
       <section class="panel panel--stack">
         <div class="panel__titulo">Call Stack</div>
@@ -89,10 +99,6 @@
     </div>
   </main>
 
-  <div class="event-loop" id="loop">
-    <div class="event-loop__anillo" id="anillo"></div>
-    <span class="event-loop__texto">Event<br>Loop</span>
-  </div>
 
   <div class="ayuda oculto">
     <div class="ayuda__tarjeta">
