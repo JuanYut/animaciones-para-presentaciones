@@ -23,6 +23,7 @@ y usan los colores de la slide invertidos: fondo `#1E1E1E` y elementos `#FFEA00`
 | `07-web-apis-categorias.html` | "4 categorías importantes de Web APIs: Timers, Network, DOM/Events, Promises (JS puro)" | Cuadrícula 2×2 de tarjetas con ícono, nombre y APIs, ya en pantalla desde el inicio. **Ciclo infinito de 9 s** (sin márgenes): reloj girando, flechas de red, click con onda en un botón, promesa que pasa de reloj a ✓. Para un GIF sin salto, recorta exactamente un ciclo. La de Promises va punteada con la etiqueta "JS puro". |
 | `08-macrotask-queue.html` | "Macrotask Queue: cola para Web APIs. Se ejecuta UNO por ciclo. Prioridad BAJA" + ejemplos | Cola con `setTimeout`, `setInterval`, `fetch`, `click`, `XHR`. En cada ciclo (contador bajo el anillo) el event loop lleva **una sola** tarea al Call Stack; corre tres ciclos y dos quedan esperando. |
 | `09-microtask-queue.html` | "Microtask Queue: cola para Promises. Se ejecuta TODOS por ciclo. Prioridad ALTA" + ejemplos | Cola con `.then`, `.catch`, `.finally`, `.then` y, abajo, una macrotarea `setTimeout` atenuada. En el ciclo 1 el loop vacía **todas** las microtareas seguidas; solo en el ciclo 2 toca `setTimeout`. |
+| `10-ejemplo-settimeout.html` | Ejemplo 1 (formato código + paneles, **1920×1080**) | `console.log("A"); setTimeout(() => console.log("B"), 0); console.log("C")`. Código a la izquierda con la línea resaltada; a la derecha Call Stack, Web APIs, Macrotask Queue, Consola y el anillo del event loop. La consola imprime `A`, `C`, `B`. |
 
 ## Otras animaciones (raíz)
 
@@ -79,7 +80,8 @@ animaciones-temporales/
 │   ├── 06-web-apis.html
 │   ├── 07-web-apis-categorias.html
 │   ├── 08-macrotask-queue.html
-│   └── 09-microtask-queue.html
+│   ├── 09-microtask-queue.html
+│   └── 10-ejemplo-settimeout.html   ← 1920×1080, código + paneles
 ├── call-stack.html
 ├── settimeout-web-apis.html
 ├── microtasks-vs-macrotasks.html

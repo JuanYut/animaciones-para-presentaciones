@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>10 · Ejemplo 1: setTimeout 0</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../shared/styles.css">
+  <style>
+    /* Columna derecha: Call Stack alto a la izquierda; Web APIs y Macrotask
+       Queue a la derecha; Consola abajo a lo ancho. */
+    .runtime {
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr 250px;
+    }
+    .panel--stack   { grid-row: 1 / 3; }
+    .panel--consola { grid-column: 1 / 3; }
+
+    /* El anillo del event loop, entre el Call Stack y la Macrotask Queue */
+    .ej .event-loop { left: 1316px; top: 430px; }
+    .ej .event-loop__anillo { border-width: 8px; }
+    .ej .event-loop__texto { font-size: 15px; }
+  </style>
+</head>
+<body>
+
+<div class="stage stage--slide ej">
+
+  <header class="titulo">
+    <span class="titulo__numero">Ejemplo 1</span>
+    <span>setTimeout con 0 ms</span>
+  </header>
+
+  <main class="escena">
+
+    <!-- ===== Izquierda: código ===== -->
+    <section class="panel">
+      <div class="panel__titulo">Código</div>
+      <div class="panel__cuerpo">
+<pre class="codigo"><span class="codigo__resaltado"></span><span class="linea">console.<span class="fn">log</span>(<span class="str">"A"</span>);</span>
+<span class="linea"></span>
+<span class="linea"><span class="fn">setTimeout</span>(() => {</span>
+<span class="linea">  console.<span class="fn">log</span>(<span class="str">"B"</span>);</span>
+<span class="linea">}, <span class="num">0</span>);</span>
+<span class="linea"></span>
+<span class="linea">console.<span class="fn">log</span>(<span class="str">"C"</span>);</span></pre>
+      </div>
+    </section>
+
+    <!-- ===== Derecha: runtime ===== -->
+    <div class="runtime">
+
+      <section class="panel panel--stack">
+        <div class="panel__titulo">Call Stack</div>
+        <div class="panel__cuerpo">
+          <div class="frame" id="f-log-a"     style="--i: 0">console.log("A")</div>
+          <div class="frame" id="f-settimeout" style="--i: 0">setTimeout(cb, 0)</div>
+          <div class="frame" id="f-log-c"     style="--i: 0">console.log("C")</div>
+          <div class="frame" id="f-cb"        style="--i: 0">cb()</div>
+          <div class="frame" id="f-log-b"     style="--i: 1">console.log("B")</div>
+        </div>
+      </section>
+
+      <section class="panel panel--webapi">
+        <div class="panel__titulo">Web APIs</div>
+        <div class="panel__cuerpo">
+          <div class="item item--webapi" id="w-timer" style="--i: 0">
+            <span>timer · cb</span><span class="temporizador" id="w-tiempo">0 ms</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel panel--macro">
+        <div class="panel__titulo">Macrotask Queue</div>
+        <div class="panel__cuerpo">
+          <div class="item item--macro" id="q-cb" style="--i: 0"><span>cb</span></div>
+        </div>
+      </section>
+
+      <section class="panel panel--consola">
+        <div class="panel__titulo">Consola</div>
+        <div class="panel__cuerpo consola">
+          <div class="consola__linea" id="c-a">A</div>
+          <div class="consola__linea" id="c-c">C</div>
+          <div class="consola__linea" id="c-b">B</div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <div class="event-loop" id="loop">
+    <div class="event-loop__anillo" id="anillo"></div>
+    <span class="event-loop__texto">Event<br>Loop</span>
+  </div>
+
+  <div class="ayuda oculto">
+    <div class="ayuda__tarjeta">
+      <h2>Controles</h2>
+      <table>
+        <tr><td><kbd>Espacio</kbd></td><td>Play / pausa</td></tr>
+        <tr><td><kbd>R</kbd></td><td>Volver al inicio</td></tr>
+        <tr><td><kbd>→</kbd> <kbd>←</kbd></td><td>Siguiente / anterior paso</td></tr>
+        <tr><td><kbd>H</kbd></td><td>Mostrar / ocultar esta ayuda</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="pista">Espacio para empezar · H ayuda</div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+<script src="../shared/controls.js"></script>
+<script>
+  const $ = (id) => document.getElementById(id);
+  const loop = $('loop'), anillo = $('anillo');
+  const VUELTAS_POR_SEG = 0.4;
+
+  const tl = gsap.timeline({
+    paused: true,
+    defaults: { duration: DUR.normal, ease: EASE.suave },
+  });
+
+  // Una instrucción síncrona sencilla: entra al stack, imprime y sale
+  function logSincrono(linea, frame, lineaConsola, etiqueta) {
+    tl.addLabel(etiqueta);
+    resaltarLinea(tl, linea);
+    apilar(tl, frame);
+    esperar(tl, DUR.rapida);
+    imprimir(tl, lineaConsola);
+    esperar(tl, DUR.rapida);
+    desapilar(tl, frame);
+    esperar(tl);
+  }
+
+  tl.addLabel('inicio');
+  esperar(tl, DUR.margen);
+
+  // 1) console.log("A") → imprime A
+  logSincrono(1, $('f-log-a'), $('c-a'), 'log-a');
+
+  // 2) setTimeout registra el callback en Web APIs (con su timer) y sale del stack
+  tl.addLabel('settimeout');
+  resaltarLinea(tl, 3);
+  apilar(tl, $('f-settimeout'));
+  esperar(tl, DUR.rapida);
+  encolar(tl, $('w-timer'));
+  esperar(tl, DUR.rapida);
+  desapilar(tl, $('f-settimeout'));
+  esperar(tl);
+
+  // 3) El timer de 0 ms vence: el callback pasa a la Macrotask Queue...
+  tl.addLabel('timer-vence');
+  tl.to('#w-tiempo', { opacity: 0.4, duration: DUR.rapida, repeat: 1, yoyo: true });
+  desencolar(tl, $('w-timer'));
+  encolar(tl, $('q-cb'), '<+=0.2');
+  esperar(tl);
+
+  // 4) ...pero el stack sigue ocupado: console.log("C") va primero
+  logSincrono(7, $('f-log-c'), $('c-c'), 'log-c');
+
+  // 5) Stack vacío: el event loop mueve el callback de la cola al stack
+  tl.addLabel('stack-vacio');
+  resaltarLinea(tl, null);
+  tl.to(loop, { scale: 1.2, duration: DUR.rapida, repeat: 1, yoyo: true, ease: 'sine.inOut' });
+  desencolar(tl, $('q-cb'));
+  apilar(tl, $('f-cb'), '<+=0.2');
+  esperar(tl);
+
+  // 6) Dentro del callback: console.log("B") → imprime B, y todo sale del stack
+  tl.addLabel('log-b');
+  resaltarLinea(tl, 4);
+  apilar(tl, $('f-log-b'));
+  esperar(tl, DUR.rapida);
+  imprimir(tl, $('c-b'));
+  esperar(tl, DUR.rapida);
+  desapilar(tl, $('f-log-b'));
+  resaltarLinea(tl, 5);
+  esperar(tl, DUR.rapida);
+  desapilar(tl, $('f-cb'));
+  resaltarLinea(tl, null, '<');
+  esperar(tl);
+
+  tl.addLabel('fin');
+  esperar(tl, DUR.margen);
+
+  // El anillo gira todo el tiempo
+  const total = tl.duration();
+  tl.fromTo(anillo, { rotation: 0 }, { rotation: 360 * Math.round(total * VUELTAS_POR_SEG), duration: total, ease: 'none' }, 0);
+
+  configurarControles(tl);
+</script>
+</body>
+</html>

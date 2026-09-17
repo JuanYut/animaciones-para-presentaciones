@@ -100,6 +100,22 @@ html, body {
   font-family: var(--fuente-codigo);
 }
 
+/* Tema slide aplicado al formato "código + paneles" (escenario 1920x1080):
+   todos los paneles en amarillo sobre negro, con texto claro para el código. */
+.stage--slide { color: #f2f2f2; }
+.stage--slide .titulo__numero { color: var(--acento); border-color: var(--acento-suave); }
+.stage--slide .panel { --c: var(--acento); background: transparent; border-color: var(--acento-suave); }
+.stage--slide .panel__titulo { border-bottom-color: var(--acento-suave); }
+.stage--slide .codigo__resaltado { background: rgba(255, 234, 0, 0.12); border-left-color: var(--acento); }
+.stage--slide .linea::before { color: var(--acento); }
+.stage--slide .kw  { color: var(--acento); }
+.stage--slide .fn  { color: #ffffff; }
+.stage--slide .str { color: rgba(255, 234, 0, 0.8); }
+.stage--slide .num { color: rgba(255, 234, 0, 0.8); }
+.stage--slide .cm  { color: rgba(255, 255, 255, 0.35); }
+.stage--slide .frame, .stage--slide .item { --c: var(--acento); color: var(--acento); background: rgba(255, 234, 0, 0.1); }
+.stage--slide .consola__linea::before { color: var(--acento); }
+
 /* Componentes de las animaciones de slides (posición: cada escena) */
 
 /* El hilo: zona donde se ejecuta una instrucción a la vez */
