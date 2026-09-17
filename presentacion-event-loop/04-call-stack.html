@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>04 · Call Stack</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../shared/styles.css">
+  <style>
+    /* ---------- Disposición de la escena ----------
+       Izquierda: la pila (abierta por arriba) con sus frames.
+       Junto a la pila: el punto del hilo, siempre al lado del frame superior.
+       Derecha abajo: zona de espera con el callback que no puede entrar. */
+
+    /* Contenedor de la pila: sin borde superior (por ahí entran y salen los frames) */
+    .pila {
+      position: absolute;
+      left: 120px;
+      top: 200px;
+      width: 400px;
+      height: 760px;
+      border: 4px solid var(--acento-suave);
+      border-top: none;
+      border-radius: 0 0 32px 32px;
+    }
+    /* Marca de entrada/salida arriba de la pila */
+    .pila__boca {
+      position: absolute;
+      left: 120px;
+      top: 200px;
+      width: 400px;
+      height: 4px;
+      background: repeating-linear-gradient(90deg,
+        var(--acento-suave) 0 16px, transparent 16px 32px);
+    }
+
+    /* Frame: una función en la pila. --i es su posición (0 = fondo).
+       Contorno = pausada esperando a la de arriba; relleno = la que el hilo ejecuta. */
+    .frame-cs {
+      --i: 0;
+      position: absolute;
+      left: 140px;
+      top: calc(850px - var(--i) * 100px);
+      width: 360px;
+      height: 90px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      border: 3px solid var(--acento);
+      border-radius: 16px;
+      background: var(--fondo);
+      color: var(--acento);
+      font-size: 34px;
+      font-weight: 700;
+      visibility: hidden;
+      opacity: 0;
+    }
+    .frame-cs svg { width: 48px; height: 48px; }
+
+    /* El hilo: punto que señala el frame que se está ejecutando */
+    .hilo-punto {
+      position: absolute;
+      left: 556px;
+      top: 881px;                /* centrado con el frame 0; GSAP lo sube con y */
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--acento);
+      box-shadow: 0 0 24px var(--acento);
+      visibility: hidden;
+      opacity: 0;
+    }
+
+    /* Callback esperando, abajo a la derecha */
+    .cs__espera   { left: 660px; top: 760px; width: 360px; height: 170px; }
+    .cs__callback { left: 790px; top: 795px; visibility: hidden; opacity: 0; }
+  </style>
+</head>
+<body>
+
+<div class="stage stage--cuadrado stage--slide cs">
+
+  <div class="pila"></div>
+  <div class="pila__boca"></div>
+
+  <!-- Frames, del fondo hacia arriba. Cada uno con su anillo de progreso. -->
+  <div class="frame-cs" id="f-main" style="--i: 0"><span>main()</span>
+    <svg viewBox="0 0 40 40"><circle class="slide__anillo-fondo" cx="20" cy="20" r="15" stroke-width="5"/>
+      <circle class="slide__anillo-arco" cx="20" cy="20" r="15" stroke-width="5" stroke-dasharray="94.25" stroke-dashoffset="94.25" transform="rotate(-90 20 20)"/></svg>
+  </div>
+  <div class="frame-cs" id="f-a" style="--i: 1"><span>a()</span>
+    <svg viewBox="0 0 40 40"><circle class="slide__anillo-fondo" cx="20" cy="20" r="15" stroke-width="5"/>
+      <circle class="slide__anillo-arco" cx="20" cy="20" r="15" stroke-width="5" stroke-dasharray="94.25" stroke-dashoffset="94.25" transform="rotate(-90 20 20)"/></svg>
+  </div>
+  <div class="frame-cs" id="f-b" style="--i: 2"><span>b()</span>
+    <svg viewBox="0 0 40 40"><circle class="slide__anillo-fondo" cx="20" cy="20" r="15" stroke-width="5"/>
+      <circle class="slide__anillo-arco" cx="20" cy="20" r="15" stroke-width="5" stroke-dasharray="94.25" stroke-dashoffset="94.25" transform="rotate(-90 20 20)"/></svg>
+  </div>
+  <div class="frame-cs" id="f-c" style="--i: 3"><span>c()</span>
+    <svg viewBox="0 0 40 40"><circle class="slide__anillo-fondo" cx="20" cy="20" r="15" stroke-width="5"/>
+      <circle class="slide__anillo-arco" cx="20" cy="20" r="15" stroke-width="5" stroke-dasharray="94.25" stroke-dashoffset="94.25" transform="rotate(-90 20 20)"/></svg>
+  </div>
+  <!-- El callback, cuando por fin entra, es un frame más (en el fondo, --i: 0) -->
+  <div class="frame-cs" id="f-cb" style="--i: 0"><span>cb()</span>
+    <svg viewBox="0 0 40 40"><circle class="slide__anillo-fondo" cx="20" cy="20" r="15" stroke-width="5"/>
+      <circle class="slide__anillo-arco" cx="20" cy="20" r="15" stroke-width="5" stroke-dasharray="94.25" stroke-dashoffset="94.25" transform="rotate(-90 20 20)"/></svg>
+  </div>
+
+  <div class="hilo-punto" id="hilo"></div>
+
+  <div class="slide__espera cs__espera"></div>
+  <div class="slide__callback cs__callback" id="cb">
+    <span class="slide__callback-titulo">CB</span>
+    <span class="slide__callback-sub">Callback</span>
+  </div>
+
+  <div class="ayuda oculto">
+    <div class="ayuda__tarjeta">
+      <h2>Controles</h2>
+      <table>
+        <tr><td><kbd>Espacio</kbd></td><td>Play / pausa</td></tr>
+        <tr><td><kbd>R</kbd></td><td>Volver al inicio</td></tr>
+        <tr><td><kbd>→</kbd> <kbd>←</kbd></td><td>Siguiente / anterior paso</td></tr>
+        <tr><td><kbd>H</kbd></td><td>Mostrar / ocultar esta ayuda</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="pista">Espacio para empezar · H ayuda</div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+<script src="../shared/controls.js"></script>
+<script>
+  const $ = (id) => document.getElementById(id);
+  const stage = document.querySelector('.stage');
+  const hilo = $('hilo'), cb = $('cb');
+  const fMain = $('f-main'), fA = $('f-a'), fB = $('f-b'), fC = $('f-c'), fCb = $('f-cb');
+
+  // Colores leídos del CSS (GSAP necesita el valor literal para animar fondo/texto)
+  const ACENTO = getComputedStyle(stage).getPropertyValue('--acento').trim();
+  const FONDO  = getComputedStyle(stage).getPropertyValue('--fondo').trim();
+
+  // ---------- Medidas y tiempos de esta escena ----------
+  const ALTO_NIVEL  = 100;    // separación vertical entre frames (igual que en el CSS)
+  const Y_BOCA      = -790;   // desplazamiento del frame 0 hasta arriba de la pila (por donde entra/sale)
+  const PERIMETRO   = 94.25;  // del anillo de progreso
+  const T_TRABAJO   = 0.5;    // segundos que trabaja una función antes de llamar a la siguiente
+  const T_RETOMA    = 0.5;    // segundos que tarda en terminar cuando la de arriba retorna
+  const T_PESADA    = 2.6;    // segundos que tarda c(), la función pesada que bloquea
+  const AVANCE      = 0.35;   // fracción del anillo que avanza una función antes de llamar a otra
+  const EMPUJE_CB   = 40;     // cuánto intenta entrar el callback mientras la pila está ocupada
+  const CB_A_BOCA   = { x: -520, y: -705 };  // del centro de la zona de espera a la boca de la pila
+
+  // ---------- Timeline ----------
+  const tl = gsap.timeline({
+    paused: true,
+    defaults: { duration: DUR.normal, ease: EASE.suave },
+  });
+
+  // --- Helpers de la pila ---
+  const nivel = (frame) => Number(frame.style.getPropertyValue('--i'));
+  const arco  = (frame) => frame.querySelector('.slide__anillo-arco');
+
+  // Un frame entra por la boca de la pila y baja hasta su nivel
+  function apilarFrame(frame, pos) {
+    const desde = Y_BOCA + nivel(frame) * ALTO_NIVEL;
+    return tl.fromTo(frame, { y: desde, autoAlpha: 0 },
+      { y: 0, autoAlpha: 1, duration: DUR.normal, ease: EASE.suave }, pos);
+  }
+  // Un frame sube y sale por la boca de la pila (LIFO: siempre el de arriba)
+  function desapilarFrame(frame, pos) {
+    const hasta = Y_BOCA + nivel(frame) * ALTO_NIVEL;
+    return tl.to(frame, { y: hasta, autoAlpha: 0, duration: DUR.normal, ease: EASE.salida }, pos);
+  }
+  // El frame pasa a ser el que el hilo ejecuta (relleno) o queda pausado (contorno)
+  const activar = (frame, pos) => tl.to(frame, { backgroundColor: ACENTO, color: FONDO, duration: DUR.rapida }, pos);
+  const pausar  = (frame, pos) => tl.to(frame, { backgroundColor: FONDO, color: ACENTO, duration: DUR.rapida }, pos);
+  // El anillo del frame avanza de la fracción `desde` a `hasta` en `segundos`
+  function trabajar(frame, desde, hasta, segundos, pos) {
+    return tl.fromTo(arco(frame),
+      { strokeDashoffset: PERIMETRO * (1 - desde) },
+      { strokeDashoffset: PERIMETRO * (1 - hasta), duration: segundos, ease: 'none' }, pos);
+  }
+  // El punto del hilo se coloca junto al frame
+  const señalar = (frame, pos) => tl.to(hilo, { y: -nivel(frame) * ALTO_NIVEL, autoAlpha: 1, duration: DUR.rapida, ease: EASE.mover }, pos);
+
+  // Una función llama a otra: la nueva entra, la anterior queda pausada
+  function llamar(nueva, anterior, etiqueta) {
+    tl.addLabel(etiqueta);
+    apilarFrame(nueva);
+    if (anterior) pausar(anterior, '<');
+    señalar(nueva, '<');
+    activar(nueva, '<');
+  }
+  // La función de arriba termina y retorna: sale, y la anterior retoma su trabajo
+  function retornar(actual, anterior, etiqueta) {
+    tl.addLabel(etiqueta);
+    desapilarFrame(actual);
+    if (anterior) {
+      señalar(anterior, '<');
+      activar(anterior, '<');
+      trabajar(anterior, AVANCE, 1, T_RETOMA);
+    } else {
+      tl.to(hilo, { autoAlpha: 0, duration: DUR.rapida }, '<');
+    }
+  }
+
+  tl.addLabel('inicio');
+  esperar(tl, DUR.margen);
+
+  // 1) Llamadas anidadas: main → a → b → c. Cada una trabaja un poco y llama a la siguiente.
+  llamar(fMain, null, 'push-main');
+  trabajar(fMain, 0, AVANCE, T_TRABAJO);
+
+  llamar(fA, fMain, 'push-a');
+  trabajar(fA, 0, AVANCE, T_TRABAJO);
+
+  llamar(fB, fA, 'push-b');
+  trabajar(fB, 0, AVANCE, T_TRABAJO);
+
+  // 2) c() es pesada: el hilo se queda en ella un buen rato...
+  llamar(fC, fB, 'push-c');
+  const tPesada = tl.duration();
+  trabajar(fC, 0, 1, T_PESADA);
+
+  // ...y mientras tanto el callback está listo pero no puede entrar: la pila está ocupada
+  tl.addLabel('bloqueo', tPesada + 0.3);
+  tl.fromTo(cb, { autoAlpha: 0, scale: 0.8 }, { autoAlpha: 1, scale: 1, duration: DUR.normal, ease: EASE.entrada }, tPesada + 0.3);
+  tl.to(cb, { x: -EMPUJE_CB, duration: DUR.rapida, repeat: 1, yoyo: true, ease: EASE.suave }, tPesada + 1.0);
+  tl.to(cb, { x: -EMPUJE_CB, duration: DUR.rapida, repeat: 1, yoyo: true, ease: EASE.suave }, tPesada + 1.9);
+
+  // 3) Retornos en orden inverso (LIFO): c, b, a, main
+  retornar(fC, fB, 'pop-c');
+  retornar(fB, fA, 'pop-b');
+  retornar(fA, fMain, 'pop-a');
+  retornar(fMain, null, 'pop-main');
+
+  // 4) Pila vacía: por fin el callback entra, se ejecuta y sale
+  tl.addLabel('callback');
+  esperar(tl, DUR.pausa);
+  tl.to(cb, { ...CB_A_BOCA, scale: 0.7, duration: DUR.lenta, ease: EASE.mover });
+  llamar(fCb, null, 'push-cb');
+  tl.to(cb, { autoAlpha: 0, duration: DUR.rapida }, '<');   // el CB "se convierte" en el frame cb()
+  trabajar(fCb, 0, 1, T_TRABAJO * 2);
+  retornar(fCb, null, 'pop-cb');
+
+  tl.addLabel('fin');
+  esperar(tl, DUR.margen);
+
+  configurarControles(tl);
+</script>
+</body>
+</html>

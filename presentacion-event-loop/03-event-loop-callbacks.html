@@ -45,25 +45,11 @@
       border-radius: 18px;
     }
 
-    /* El callback: "CB" con contorno, para distinguirlo de las instrucciones
-       normales. Parte encajado en el hueco de la instrucción 1. */
-    .async__callback {
-      position: absolute;
-      left: 550px;
-      top: 250px;
-      width: 100px;
-      height: 100px;
-      display: grid;
-      align-content: center;
-      justify-items: center;
-      gap: 2px;
-      border: 4px solid var(--acento);
-      border-radius: 18px;
-      background: var(--fondo);
-      color: var(--acento);
-    }
-    .async__cb-titulo { font-size: 38px; font-weight: 700; line-height: 1; }
-    .async__cb-sub    { font-size: 13px; font-weight: 500; letter-spacing: 0.04em; opacity: 0.8; }
+    /* Posición del callback (parte encajado en el hueco de la instrucción 1)
+       y de la zona de espera (centrada en 540, 825) */
+    .async__callback { left: 550px; top: 250px; }
+    .async__espera   { left: 340px; top: 740px; width: 400px; height: 170px; }
+
     /* Anillo de progreso de la tarea lenta (timer, red...), en la esquina del CB */
     .async__timer {
       position: absolute;
@@ -80,16 +66,6 @@
     /* Anillo del event loop, centrado en (540, 545) */
     .async .event-loop { left: 480px; top: 485px; }
 
-    /* Zona de espera de callbacks, centrada en (540, 825) */
-    .async__espera {
-      position: absolute;
-      left: 340px;
-      top: 740px;
-      width: 400px;
-      height: 170px;
-      border: 3px dashed var(--acento-suave);
-      border-radius: 28px;
-    }
   </style>
 </head>
 <body>
@@ -111,9 +87,9 @@
   <div class="slide__bloque" id="b3">3</div>
 
   <!-- El callback (se dibuja después para quedar encima de la instrucción 1) -->
-  <div class="async__callback" id="cb">
-    <span class="async__cb-titulo">CB</span>
-    <span class="async__cb-sub">Callback</span>
+  <div class="slide__callback async__callback" id="cb">
+    <span class="slide__callback-titulo">CB</span>
+    <span class="slide__callback-sub">Callback</span>
     <!-- Círculo de 15px de radio: perímetro 2·π·15 ≈ 94.25 (= stroke-dasharray) -->
     <svg class="async__timer" viewBox="0 0 40 40">
       <circle class="async__timer-fondo" cx="20" cy="20" r="15" stroke-width="5"/>
@@ -126,7 +102,7 @@
     <div class="event-loop__anillo" id="anillo"></div>
   </div>
 
-  <div class="async__espera"></div>
+  <div class="slide__espera async__espera"></div>
 
   <div class="ayuda oculto">
     <div class="ayuda__tarjeta">

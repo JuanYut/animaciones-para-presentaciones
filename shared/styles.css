@@ -136,6 +136,32 @@ html, body {
   font-size: 56px;
   font-weight: 700;
 }
+/* Callback: "CB" con contorno, para distinguirlo de las instrucciones */
+.slide__callback {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 2px;
+  border: 4px solid var(--acento);
+  border-radius: 18px;
+  background: var(--fondo);
+  color: var(--acento);
+}
+.slide__callback-titulo { font-size: 38px; font-weight: 700; line-height: 1; }
+.slide__callback-sub    { font-size: 13px; font-weight: 500; letter-spacing: 0.04em; opacity: 0.8; }
+/* Zona de espera de callbacks (punteada) */
+.slide__espera {
+  position: absolute;
+  border: 3px dashed var(--acento-suave);
+  border-radius: 28px;
+}
+/* Anillo de progreso (SVG de 40x40, círculo r=15 → perímetro 94.25).
+   Toma el color del texto del elemento que lo contiene. */
+.slide__anillo-fondo { fill: none; stroke: currentColor; opacity: 0.25; }
+.slide__anillo-arco  { fill: none; stroke: currentColor; stroke-linecap: round; }
 /* Anillo del event loop en tema slide */
 .stage--slide .event-loop__anillo {
   border-color: var(--acento-suave);
