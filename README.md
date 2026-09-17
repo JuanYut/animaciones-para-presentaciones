@@ -15,7 +15,7 @@ y usan los colores de la slide invertidos: fondo `#1E1E1E` y elementos `#FFEA00`
 | Archivo | Slide | Qué muestra |
 | --- | --- | --- |
 | `01-single-thread.html` | "JS es single-threaded: solo puede ejecutar una instrucción a la vez" | Una sola vía: las instrucciones entran al hilo de una en una; la siguiente intenta entrar y rebota. |
-| `02-sincrono.html` | "JS es síncrono: el código se ejecuta línea por línea, en orden" | Seis líneas de código abstractas; un cursor baja y cada línea se rellena de izquierda a derecha, una tras otra. Las hechas quedan atenuadas. |
+| `02-sincrono.html` | "JS es síncrono: el código se ejecuta línea por línea, en orden" | Cinco líneas de código abstractas; un cursor baja y cada línea se rellena de izquierda a derecha, una tras otra. Las hechas quedan atenuadas. |
 
 ## Otras animaciones (raíz)
 
