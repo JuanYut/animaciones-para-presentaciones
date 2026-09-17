@@ -203,10 +203,28 @@ html, body {
   visibility: hidden;
   opacity: 0;
 }
-/* Anillo del event loop en tema slide */
+/* Etiqueta discreta para nombrar cada zona (posición: cada escena) */
+.slide__etiqueta {
+  position: absolute;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--acento);
+  opacity: 0.6;
+}
+/* Anillo del event loop en tema slide (el texto del centro no gira) */
 .stage--slide .event-loop__anillo {
   border-color: var(--acento-suave);
   border-top-color: var(--acento);
+}
+.stage--slide .event-loop__texto {
+  position: relative;
+  text-align: center;
+  font-size: 22px;
+  line-height: 1.3;
+  letter-spacing: 0.1em;
+  color: var(--acento);
 }
 
 /* Título superior de la escena */

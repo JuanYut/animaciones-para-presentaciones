@@ -73,6 +73,7 @@
 <div class="stage stage--cuadrado stage--slide el">
 
   <!-- Mini Call Stack -->
+  <div class="slide__etiqueta" style="left: 80px; top: 780px;">Call Stack</div>
   <div class="slide__pila"></div>
   <div class="slide__pila-boca"></div>
   <div class="slide__frame" id="f-bloque" style="--i: 0"><span>BloqueCodigo</span>
@@ -96,10 +97,12 @@
   <!-- Event loop -->
   <div class="event-loop" id="loop">
     <div class="event-loop__anillo" id="anillo"></div>
+    <span class="event-loop__texto">Event<br>Loop</span>
   </div>
   <div class="vigia" id="vigia"></div>
 
   <!-- Callbacks listos -->
+  <div class="slide__etiqueta" style="left: 440px; top: 950px;">Callbacks en espera</div>
   <div class="slide__espera el__espera"></div>
   <div class="slide__callback" id="cb1"><span class="slide__callback-titulo">CB1</span><span class="slide__callback-sub">Callback</span></div>
   <div class="slide__callback" id="cb2"><span class="slide__callback-titulo">CB2</span><span class="slide__callback-sub">Callback</span></div>
