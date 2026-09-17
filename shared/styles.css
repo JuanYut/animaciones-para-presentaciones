@@ -90,6 +90,16 @@ html, body {
   padding: 0;
 }
 
+/* Colores de las animaciones de la presentación: la slide tiene fondo #FFEA00
+   y texto #1E1E1E, aquí se invierten para que el cuadrado contraste. */
+.stage--slide {
+  --fondo: #1E1E1E;
+  --acento: #FFEA00;
+  --acento-suave: rgba(255, 234, 0, 0.25);
+  background: var(--fondo);
+  font-family: var(--fuente-codigo);
+}
+
 /* Título superior de la escena */
 .titulo {
   display: flex;

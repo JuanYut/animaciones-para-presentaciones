@@ -7,16 +7,6 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../shared/styles.css">
   <style>
-    /* ---------- Colores de esta escena (a juego con la slide) ----------
-       La slide tiene fondo #FFEA00 y texto #1E1E1E; aquí lo invertimos:
-       fondo oscuro y elementos amarillos para que el cuadrado contraste. */
-    .hilo {
-      --fondo: #1E1E1E;
-      --acento: #FFEA00;
-      --acento-suave: rgba(255, 234, 0, 0.25);
-      background: var(--fondo);
-      font-family: var(--fuente-codigo);
-    }
 
     /* Vía única por la que pasan las instrucciones */
     .hilo__via {
@@ -75,7 +65,7 @@
 </head>
 <body>
 
-<div class="stage stage--cuadrado hilo">
+<div class="stage stage--cuadrado stage--slide hilo">
 
   <div class="hilo__via"></div>
 

@@ -15,6 +15,7 @@ y usan los colores de la slide invertidos: fondo `#1E1E1E` y elementos `#FFEA00`
 | Archivo | Slide | Qué muestra |
 | --- | --- | --- |
 | `01-single-thread.html` | "JS es single-threaded: solo puede ejecutar una instrucción a la vez" | Una sola vía: las instrucciones entran al hilo de una en una; la siguiente intenta entrar y rebota. |
+| `02-sincrono.html` | "JS es síncrono: el código se ejecuta línea por línea, en orden" | Seis líneas de código abstractas; un cursor baja y cada línea se rellena de izquierda a derecha, una tras otra. Las hechas quedan atenuadas. |
 
 ## Otras animaciones (raíz)
 
@@ -63,7 +64,8 @@ animaciones-temporales/
 │   ├── styles.css      ← escenario, paleta de colores, tipografía, componentes
 │   └── controls.js     ← constantes de tiempo/easing, controles de teclado, helpers
 ├── presentacion-event-loop/
-│   └── 01-single-thread.html   ← una animación por slide, en orden
+│   ├── 01-single-thread.html   ← una animación por slide, en orden
+│   └── 02-sincrono.html
 ├── call-stack.html
 ├── settimeout-web-apis.html
 ├── microtasks-vs-macrotasks.html
@@ -75,6 +77,6 @@ animaciones-temporales/
 
 ## Cómo modificar
 
-- **Colores:** variables `--color-*` al inicio de `shared/styles.css`. Las animaciones de la presentación definen sus propios `--fondo` / `--acento` en su `<style>`.
+- **Colores:** variables `--color-*` al inicio de `shared/styles.css`. Las de la presentación usan `--fondo` / `--acento` de la clase `.stage--slide`, en el mismo archivo.
 - **Velocidad:** constantes `DUR` y `EASE` al inicio de `shared/controls.js`.
 - **Textos y pasos:** cada HTML tiene sus elementos en el cuerpo y la secuencia de pasos en el `<script>` del final, con un `tl.addLabel(...)` por paso.
