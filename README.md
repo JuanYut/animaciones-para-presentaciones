@@ -16,6 +16,7 @@ y usan los colores de la slide invertidos: fondo `#1E1E1E` y elementos `#FFEA00`
 | --- | --- | --- |
 | `01-single-thread.html` | "JS es single-threaded: solo puede ejecutar una instrucción a la vez" | Una sola vía: las instrucciones entran al hilo de una en una; la siguiente intenta entrar y rebota. |
 | `02-sincrono.html` | "JS es síncrono: el código se ejecuta línea por línea, en orden" | Cinco líneas de código abstractas; un cursor baja y cada línea se rellena de izquierda a derecha, una tras otra. Las hechas quedan atenuadas. |
+| `03-event-loop-callbacks.html` | "JS maneja asincronía con el Event Loop: los callbacks esperan a que el hilo esté libre. Callback: una FN que pasas a otra FN para que ésa la ejecute después" | La instrucción 1 lleva un callback `ƒ` encajado; al ejecutarse, el `ƒ` cae a la zona de espera mientras el hilo sigue con 2 y 3. Cuando queda libre, el anillo del event loop lo sube al hilo y se ejecuta. |
 
 ## Otras animaciones (raíz)
 
@@ -65,7 +66,8 @@ animaciones-temporales/
 │   └── controls.js     ← constantes de tiempo/easing, controles de teclado, helpers
 ├── presentacion-event-loop/
 │   ├── 01-single-thread.html   ← una animación por slide, en orden
-│   └── 02-sincrono.html
+│   ├── 02-sincrono.html
+│   └── 03-event-loop-callbacks.html
 ├── call-stack.html
 ├── settimeout-web-apis.html
 ├── microtasks-vs-macrotasks.html

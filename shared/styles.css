@@ -100,6 +100,48 @@ html, body {
   font-family: var(--fuente-codigo);
 }
 
+/* Componentes de las animaciones de slides (posición: cada escena) */
+
+/* El hilo: zona donde se ejecuta una instrucción a la vez */
+.slide__slot {
+  position: absolute;
+  border: 4px solid var(--acento-suave);
+  border-radius: 32px;
+  background: var(--fondo);
+}
+/* Barra de progreso de la instrucción en ejecución */
+.slide__progreso {
+  position: absolute;
+  left: 40px;
+  right: 40px;
+  bottom: 24px;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--acento);
+  transform-origin: left center;
+  transform: scaleX(0);
+  visibility: hidden;
+  opacity: 0;
+}
+/* Instrucción: cuadrado amarillo con número oscuro */
+.slide__bloque {
+  position: absolute;
+  width: 130px;
+  height: 130px;
+  display: grid;
+  place-items: center;
+  border-radius: 20px;
+  background: var(--acento);
+  color: var(--fondo);
+  font-size: 56px;
+  font-weight: 700;
+}
+/* Anillo del event loop en tema slide */
+.stage--slide .event-loop__anillo {
+  border-color: var(--acento-suave);
+  border-top-color: var(--acento);
+}
+
 /* Título superior de la escena */
 .titulo {
   display: flex;
