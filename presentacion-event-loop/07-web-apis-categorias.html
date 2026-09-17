@@ -48,7 +48,7 @@
       text-transform: uppercase;
     }
     /* Onda del click en el ícono de DOM/Events */
-    .onda { transform-origin: 50px 62px; opacity: 0; }
+    .tarjeta__icono .onda { opacity: 0; stroke-width: 2; }   /* aro fino: se escala x3 al expandirse */
   </style>
 </head>
 <body>
@@ -60,7 +60,7 @@
     <svg class="tarjeta__icono" viewBox="0 0 100 100">
       <circle cx="50" cy="54" r="36"/>
       <path d="M40 8h20"/>
-      <path class="manecilla" d="M50 54V30" style="transform-origin: 50px 54px"/>
+      <path class="manecilla" d="M50 54V30"/>
     </svg>
     <div class="tarjeta__titulo">Timers</div>
     <div class="tarjeta__apis">setTimeout<br>setInterval</div>
@@ -81,7 +81,7 @@
     <svg class="tarjeta__icono" viewBox="0 0 100 100">
       <rect class="nodo boton" x="18" y="40" width="64" height="44" rx="10"/>
       <circle class="onda" cx="50" cy="62" r="10"/>
-      <path class="cursor" d="M56 56l22 8-9 3 6 9-4 3-6-9-6 8z" style="transform-origin: 56px 56px"/>
+      <path class="cursor" d="M56 56l22 8-9 3 6 9-4 3-6-9-6 8z"/>
     </svg>
     <div class="tarjeta__titulo">DOM / Events</div>
     <div class="tarjeta__apis">addEventListener<br>click, input, …</div>
@@ -92,7 +92,7 @@
     <div class="tarjeta__badge">JS puro</div>
     <svg class="tarjeta__icono" viewBox="0 0 100 100">
       <circle cx="50" cy="50" r="38"/>
-      <path class="reloj-promesa" d="M50 50V28" style="transform-origin: 50px 50px"/>
+      <path class="reloj-promesa" d="M50 50V28"/>
       <path class="check-promesa" d="M32 52l12 12 24-26" stroke-dasharray="60" stroke-dashoffset="60"/>
     </svg>
     <div class="tarjeta__titulo">Promises</div>
@@ -140,7 +140,8 @@
   const t0 = tl.duration();
 
   // Timers: la manecilla da vueltas
-  tl.to('.manecilla', { rotation: 360 * 3, duration: T_ACTIVIDAD, ease: 'none' }, t0);
+  // Nota: en SVG el centro de giro se indica con svgOrigin (coordenadas del viewBox)
+  tl.to('.manecilla', { rotation: 360 * 3, svgOrigin: '50 54', duration: T_ACTIVIDAD, ease: 'none' }, t0);
 
   // Network: las flechas van y vienen
   tl.to('.flecha-arriba', { y: -8, duration: 0.45, repeat: 11, yoyo: true, ease: 'sine.inOut' }, t0);
@@ -149,15 +150,15 @@
   // DOM/Events: el cursor hace click en el botón y sale una onda (tres veces)
   for (let i = 0; i < 3; i++) {
     const t = t0 + 0.4 + i * 1.8;
-    tl.to('.cursor', { scale: 0.85, duration: 0.15, repeat: 1, yoyo: true, ease: 'power2.in' }, t);
+    tl.to('.cursor', { scale: 0.85, svgOrigin: '56 56', duration: 0.15, repeat: 1, yoyo: true, ease: 'power2.in' }, t);
     tl.to('.boton', { fill: ACENTO, duration: 0.15, repeat: 1, yoyo: true }, t);
-    tl.fromTo('.onda', { scale: 0.4, opacity: 1 }, { scale: 3, opacity: 0, duration: 0.8, ease: 'power2.out' }, t + 0.15);
+    tl.fromTo('.onda', { scale: 0.4, opacity: 1, svgOrigin: '50 62' }, { scale: 3, opacity: 0, duration: 0.8, ease: 'power2.out' }, t + 0.15);
   }
 
   // Promises: espera (manecilla) y luego se resuelve (✓ dibujado); dos veces
   for (let i = 0; i < 2; i++) {
     const t = t0 + i * 3.0;
-    tl.fromTo('.reloj-promesa', { rotation: 0, autoAlpha: 1 }, { rotation: 360, duration: 1.6, ease: 'none' }, t);
+    tl.fromTo('.reloj-promesa', { rotation: 0, autoAlpha: 1, svgOrigin: '50 50' }, { rotation: 360, duration: 1.6, ease: 'none' }, t);
     tl.to('.reloj-promesa', { autoAlpha: 0, duration: 0.2 }, t + 1.6);
     tl.fromTo('.check-promesa', { strokeDashoffset: 60 }, { strokeDashoffset: 0, duration: 0.5, ease: 'power2.out' }, t + 1.7);
     tl.to('.check-promesa', { strokeDashoffset: 60, duration: 0.3 }, t + 2.7);
