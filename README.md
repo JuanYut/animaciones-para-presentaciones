@@ -19,6 +19,8 @@ y usan los colores de la slide invertidos: fondo `#1E1E1E` y elementos `#FFEA00`
 | `03-event-loop-callbacks.html` | "JS maneja asincronía con el Event Loop: los callbacks esperan a que el hilo esté libre. Callback: una FN que pasas a otra FN para que ésa la ejecute después" | La instrucción 1 lleva un callback `CB` encajado; al ejecutarse, el `CB` cae a la zona de espera con un anillo de progreso (la tarea lenta en curso) mientras el hilo sigue con 2 y 3; al completarse queda "listo" y espera. Cuando queda libre, el anillo del event loop lo sube al hilo y se ejecuta. |
 | `04-call-stack.html` | "Call Stack: es una pila LIFO; es donde se ven las funciones que el hilo está ejecutando; es bloqueante porque el hilo solo hace una cosa a la vez; es una visualización del trabajo del hilo, no quien controla el flujo" | Llamadas anidadas `BloqueCodigo → Fn1 → Fn2 → Fn3(callback)` entrando y saliendo por la boca de la pila (LIFO). Un punto (el hilo) señala el frame activo; los de abajo quedan pausados con su anillo a medias. `Fn3` tarda y el `CB` no puede entrar hasta que la pila se vacía; entonces corre como `callback()`. |
 | `05-event-loop.html` | "Event Loop: ciclo eterno que revisa si el Call Stack está vacío. Es el vigilante que coordina TODO. Sin él, JavaScript no sería asíncrono" | El anillo gira siempre; un vigía sale a revisar la pila y muestra ✗ (ocupada) o ✓ (vacía). Con ✓ y callbacks listos, el anillo lleva `CB1` y `CB2` a la pila. Luego el anillo se apaga: `CB3` sigue en la fila y nadie lo mueve; cuando vuelve a encenderse, revisa, ✓, y `CB3` se ejecuta. |
+| `06-web-apis.html` | "Web APIs: no son parte de JS. Servicios del navegador que hacen trabajo en paralelo. Timers, Network, DOM" | Caja "JS · 1 hilo" a la izquierda con su único hilo ocupado; frontera punteada; a la derecha "Navegador · en paralelo" con tres tarjetas (Timers, Network, DOM) cuyos anillos se llenan al mismo tiempo, cada uno a su ritmo, y terminan con ✓. |
+| `07-web-apis-categorias.html` | "4 categorías importantes de Web APIs: Timers, Network, DOM/Events, Promises (JS puro)" | Cuadrícula 2×2 de tarjetas con ícono, nombre y APIs. Los íconos se mueven: reloj girando, flechas de red, click con onda en un botón, promesa que pasa de reloj a ✓. La de Promises va punteada con la etiqueta "JS puro". |
 
 ## Otras animaciones (raíz)
 
@@ -71,7 +73,9 @@ animaciones-temporales/
 │   ├── 02-sincrono.html
 │   ├── 03-event-loop-callbacks.html
 │   ├── 04-call-stack.html
-│   └── 05-event-loop.html
+│   ├── 05-event-loop.html
+│   ├── 06-web-apis.html
+│   └── 07-web-apis-categorias.html
 ├── call-stack.html
 ├── settimeout-web-apis.html
 ├── microtasks-vs-macrotasks.html
