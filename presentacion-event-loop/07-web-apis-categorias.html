@@ -24,11 +24,11 @@
       border-radius: 28px;
       color: var(--acento);
       text-align: center;
-      visibility: hidden;
-      opacity: 0;
     }
     .tarjeta--promesa { border-style: dashed; }
     .tarjeta__icono { width: 150px; height: 150px; }
+    #t-dom .tarjeta__icono { width: 180px; height: 180px; }   /* un poco más grande */
+    .tarjeta__icono .cursor { stroke-width: 3; }               /* cursor más fino */
     .tarjeta__icono * { fill: none; stroke: var(--acento); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
     .tarjeta__icono .nodo { fill: rgba(255, 234, 0, 0); }
     .tarjeta__titulo { font-size: 34px; font-weight: 700; letter-spacing: 0.04em; margin-top: 8px; }
@@ -119,53 +119,42 @@
 <script>
   const stage = document.querySelector('.stage');
   const ACENTO = getComputedStyle(stage).getPropertyValue('--acento').trim();
-  const tarjetas = gsap.utils.toArray('.tarjeta');
 
-  const T_ACTIVIDAD = 6.0;   // segundos con los íconos en movimiento
+  // ---------- Ciclo ----------
+  // Esta animación no tiene inicio ni fin: los cuatro íconos se mueven siempre.
+  // CICLO es la duración de una vuelta completa; está elegida para que todos
+  // los movimientos vuelvan a su estado inicial justo al terminar (así el GIF
+  // se puede repetir sin salto):
+  //   reloj: 1 vuelta cada 3 s · red: ida y vuelta cada 0.9 s ·
+  //   click: cada 1.8 s · promesa: cada 3 s   →   9 s es múltiplo de todos.
+  const CICLO = 9.0;
 
-  const tl = gsap.timeline({ paused: true, defaults: { duration: DUR.normal, ease: EASE.suave } });
+  const tl = gsap.timeline({ paused: true, repeat: -1, defaults: { ease: EASE.suave } });
+  tl.addLabel('ciclo');
 
-  tl.addLabel('inicio');
-  esperar(tl, DUR.margen);
-
-  // 1) Las cuatro tarjetas entran una tras otra
-  tl.addLabel('tarjetas');
-  tarjetas.forEach((t, i) => {
-    tl.fromTo(t, { autoAlpha: 0, y: 40, scale: 0.96 },
-      { autoAlpha: 1, y: 0, scale: 1, duration: DUR.lenta, ease: EASE.suave }, i ? '<+=0.35' : '>');
-  });
-
-  // 2) Cada ícono hace lo suyo, todos al mismo tiempo
-  tl.addLabel('actividad');
-  const t0 = tl.duration();
-
-  // Timers: la manecilla da vueltas
+  // Timers: la manecilla da vueltas (1 vuelta cada 3 s)
   // Nota: en SVG el centro de giro se indica con svgOrigin (coordenadas del viewBox)
-  tl.to('.manecilla', { rotation: 360 * 3, svgOrigin: '50 54', duration: T_ACTIVIDAD, ease: 'none' }, t0);
+  tl.fromTo('.manecilla', { rotation: 0 }, { rotation: 360 * (CICLO / 3), svgOrigin: '50 54', duration: CICLO, ease: 'none' }, 0);
 
-  // Network: las flechas van y vienen
-  tl.to('.flecha-arriba', { y: -8, duration: 0.45, repeat: 11, yoyo: true, ease: 'sine.inOut' }, t0);
-  tl.to('.flecha-abajo',  { y: 8,  duration: 0.45, repeat: 11, yoyo: true, ease: 'sine.inOut' }, t0);
+  // Network: las flechas van y vienen (0.45 s por tramo)
+  const tramos = Math.round(CICLO / 0.45);
+  tl.fromTo('.flecha-arriba', { y: 0 }, { y: -8, duration: 0.45, repeat: tramos - 1, yoyo: true, ease: 'sine.inOut' }, 0);
+  tl.fromTo('.flecha-abajo',  { y: 0 }, { y: 8,  duration: 0.45, repeat: tramos - 1, yoyo: true, ease: 'sine.inOut' }, 0);
 
-  // DOM/Events: el cursor hace click en el botón y sale una onda (tres veces)
-  for (let i = 0; i < 3; i++) {
-    const t = t0 + 0.4 + i * 1.8;
+  // DOM/Events: el cursor hace click en el botón y sale una onda (cada 1.8 s)
+  for (let t = 0.4; t < CICLO; t += 1.8) {
     tl.to('.cursor', { scale: 0.85, svgOrigin: '56 56', duration: 0.15, repeat: 1, yoyo: true, ease: 'power2.in' }, t);
     tl.to('.boton', { fill: ACENTO, duration: 0.15, repeat: 1, yoyo: true }, t);
     tl.fromTo('.onda', { scale: 0.4, opacity: 1, svgOrigin: '50 62' }, { scale: 3, opacity: 0, duration: 0.8, ease: 'power2.out' }, t + 0.15);
   }
 
-  // Promises: espera (manecilla) y luego se resuelve (✓ dibujado); dos veces
-  for (let i = 0; i < 2; i++) {
-    const t = t0 + i * 3.0;
+  // Promises: espera (manecilla) y luego se resuelve (✓ dibujado), cada 3 s
+  for (let t = 0; t < CICLO; t += 3.0) {
     tl.fromTo('.reloj-promesa', { rotation: 0, autoAlpha: 1, svgOrigin: '50 50' }, { rotation: 360, duration: 1.6, ease: 'none' }, t);
     tl.to('.reloj-promesa', { autoAlpha: 0, duration: 0.2 }, t + 1.6);
     tl.fromTo('.check-promesa', { strokeDashoffset: 60 }, { strokeDashoffset: 0, duration: 0.5, ease: 'power2.out' }, t + 1.7);
     tl.to('.check-promesa', { strokeDashoffset: 60, duration: 0.3 }, t + 2.7);
   }
-
-  tl.addLabel('fin', t0 + T_ACTIVIDAD);
-  esperar(tl, DUR.margen, t0 + T_ACTIVIDAD);
 
   configurarControles(tl);
 </script>
