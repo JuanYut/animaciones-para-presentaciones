@@ -51,7 +51,7 @@
       border-radius: 16px;
       background: var(--fondo);
       color: var(--acento);
-      font-size: 34px;
+      font-size: 30px;
       font-weight: 700;
       visibility: hidden;
       opacity: 0;
@@ -85,24 +85,24 @@
   <div class="pila__boca"></div>
 
   <!-- Frames, del fondo hacia arriba. Cada uno con su anillo de progreso. -->
-  <div class="frame-cs" id="f-main" style="--i: 0"><span>main()</span>
+  <div class="frame-cs" id="f-main" style="--i: 0"><span>BloqueCodigo</span>
     <svg viewBox="0 0 40 40"><circle class="slide__anillo-fondo" cx="20" cy="20" r="15" stroke-width="5"/>
       <circle class="slide__anillo-arco" cx="20" cy="20" r="15" stroke-width="5" stroke-dasharray="94.25" stroke-dashoffset="94.25" transform="rotate(-90 20 20)"/></svg>
   </div>
-  <div class="frame-cs" id="f-a" style="--i: 1"><span>a()</span>
+  <div class="frame-cs" id="f-a" style="--i: 1"><span>Fn1()</span>
     <svg viewBox="0 0 40 40"><circle class="slide__anillo-fondo" cx="20" cy="20" r="15" stroke-width="5"/>
       <circle class="slide__anillo-arco" cx="20" cy="20" r="15" stroke-width="5" stroke-dasharray="94.25" stroke-dashoffset="94.25" transform="rotate(-90 20 20)"/></svg>
   </div>
-  <div class="frame-cs" id="f-b" style="--i: 2"><span>b()</span>
+  <div class="frame-cs" id="f-b" style="--i: 2"><span>Fn2()</span>
     <svg viewBox="0 0 40 40"><circle class="slide__anillo-fondo" cx="20" cy="20" r="15" stroke-width="5"/>
       <circle class="slide__anillo-arco" cx="20" cy="20" r="15" stroke-width="5" stroke-dasharray="94.25" stroke-dashoffset="94.25" transform="rotate(-90 20 20)"/></svg>
   </div>
-  <div class="frame-cs" id="f-c" style="--i: 3"><span>c()</span>
+  <div class="frame-cs" id="f-c" style="--i: 3"><span>Fn3(callback)</span>
     <svg viewBox="0 0 40 40"><circle class="slide__anillo-fondo" cx="20" cy="20" r="15" stroke-width="5"/>
       <circle class="slide__anillo-arco" cx="20" cy="20" r="15" stroke-width="5" stroke-dasharray="94.25" stroke-dashoffset="94.25" transform="rotate(-90 20 20)"/></svg>
   </div>
   <!-- El callback, cuando por fin entra, es un frame más (en el fondo, --i: 0) -->
-  <div class="frame-cs" id="f-cb" style="--i: 0"><span>cb()</span>
+  <div class="frame-cs" id="f-cb" style="--i: 0"><span>callback()</span>
     <svg viewBox="0 0 40 40"><circle class="slide__anillo-fondo" cx="20" cy="20" r="15" stroke-width="5"/>
       <circle class="slide__anillo-arco" cx="20" cy="20" r="15" stroke-width="5" stroke-dasharray="94.25" stroke-dashoffset="94.25" transform="rotate(-90 20 20)"/></svg>
   </div>
@@ -151,7 +151,7 @@
   const T_CAMBIO    = 0.6;    // segundos de la transición encendido/pausado y del punto del hilo
   const T_RESPIRO   = 0.4;    // pausa breve entre un retorno y el siguiente
   const T_RETOMA    = 1.0;    // segundos que tarda en terminar cuando la de arriba retorna
-  const T_PESADA    = 4.2;    // segundos que tarda c(), la función pesada que bloquea
+  const T_PESADA    = 4.2;    // segundos que tarda Fn3, la función pesada que bloquea
   const AVANCE      = 0.35;   // fracción del anillo que avanza una función antes de llamar a otra
   const EMPUJE_CB   = 40;     // cuánto intenta entrar el callback mientras la pila está ocupada
   const CB_A_BOCA   = { x: -520, y: -705 };  // del centro de la zona de espera a la boca de la pila
@@ -214,7 +214,8 @@
   tl.addLabel('inicio');
   esperar(tl, DUR.margen);
 
-  // 1) Llamadas anidadas: main → a → b → c. Cada una trabaja un poco y llama a la siguiente.
+  // 1) Llamadas anidadas: BloqueCodigo → Fn1 → Fn2 → Fn3(callback).
+  //    Cada una trabaja un poco y llama a la siguiente.
   llamar(fMain, null, 'push-main');
   trabajar(fMain, 0, AVANCE, T_TRABAJO);
 
@@ -224,7 +225,7 @@
   llamar(fB, fA, 'push-b');
   trabajar(fB, 0, AVANCE, T_TRABAJO);
 
-  // 2) c() es pesada: el hilo se queda en ella un buen rato...
+  // 2) Fn3 es pesada: el hilo se queda en ella un buen rato...
   llamar(fC, fB, 'push-c');
   const tPesada = tl.duration();
   trabajar(fC, 0, 1, T_PESADA);
@@ -235,7 +236,7 @@
   tl.to(cb, { x: -EMPUJE_CB, duration: 0.45, repeat: 1, yoyo: true, ease: "sine.inOut" }, tPesada + 1.6);
   tl.to(cb, { x: -EMPUJE_CB, duration: 0.45, repeat: 1, yoyo: true, ease: "sine.inOut" }, tPesada + 2.9);
 
-  // 3) Retornos en orden inverso (LIFO): c, b, a, main
+  // 3) Retornos en orden inverso (LIFO): Fn3, Fn2, Fn1, BloqueCodigo
   retornar(fC, fB, 'pop-c');
   retornar(fB, fA, 'pop-b');
   retornar(fA, fMain, 'pop-a');
