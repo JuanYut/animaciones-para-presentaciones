@@ -21,9 +21,10 @@
     .panel--loop { position: relative; }
     .panel--loop .panel__titulo { border-bottom: none; height: 100%; font-size: 26px; padding-right: 140px; }
     .panel--loop .panel__titulo span { margin-right: auto; }   /* texto a la izquierda, anillo a la derecha */
-    .panel--loop .event-loop { position: absolute; top: 50%; right: 60px; width: 64px; height: 64px; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; }
+    .panel--loop .event-loop__grupo { position: absolute; top: 50%; right: 60px; transform: translateY(-50%); display: flex; align-items: center; gap: 16px; }
+    .panel--loop .event-loop { width: 64px; height: 64px; }
     .panel--loop .event-loop__anillo { border-width: 6px; }
-    .panel--loop .event-loop__ciclo { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; color: rgba(255, 255, 255, 0.5); text-transform: uppercase; }
+    .panel--loop .event-loop__ciclo { font-size: 26px; font-weight: 700; letter-spacing: -0.01em; color: #f2f2f2; white-space: nowrap; }
 
   </style>
 </head>
@@ -58,9 +59,9 @@
       <section class="panel panel--loop">
         <div class="panel__titulo">
           <span>Event Loop · orquesta todo</span>
-          <div class="event-loop" id="loop">
-            <div class="event-loop__anillo" id="anillo"></div>
+          <div class="event-loop__grupo" id="grupoLoop">
             <div class="event-loop__ciclo" id="ciclo">Ciclo 1</div>
+            <div class="event-loop" id="loop"><div class="event-loop__anillo" id="anillo"></div></div>
           </div>
         </div>
       </section>
