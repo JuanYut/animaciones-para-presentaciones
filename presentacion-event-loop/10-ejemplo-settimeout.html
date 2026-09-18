@@ -10,20 +10,65 @@
     />
     <link rel="stylesheet" href="../shared/styles.css" />
     <style>
-      /* Columna derecha: Call Stack alto a la izquierda; Web APIs y Macrotask
-       Queue a la derecha; Consola abajo a lo ancho. */
+      /* Disposición base para todos los ejemplos (aunque un panel quede vacío):
+         barra del Event Loop arriba a lo ancho; columna izquierda con Call Stack
+         (alto) y Consola debajo; columna derecha con Web APIs, Microtask Queue y
+         Macrotask Queue repartidos en partes iguales. Las 6 filas de 1fr son
+         "unidades": cada panel derecho ocupa 2, el stack 4 y la consola 2. */
       .runtime {
         grid-template-columns: 1fr 1fr;
-        grid-template-rows: 110px 1fr 1fr 250px;
+        grid-template-rows: 90px repeat(6, 1fr);
+        gap: 24px 32px;
       }
       .panel--loop {
         grid-column: 1 / 3;
       }
       .panel--stack {
-        grid-row: 2 / 4;
+        grid-column: 1;
+        grid-row: 2 / 6;
       }
       .panel--consola {
-        grid-column: 1 / 3;
+        grid-column: 1;
+        grid-row: 6 / 8;
+      }
+      .panel--webapi {
+        grid-column: 2;
+        grid-row: 2 / 4;
+      }
+      .panel--micro {
+        grid-column: 2;
+        grid-row: 4 / 6;
+      }
+      .panel--macro {
+        grid-column: 2;
+        grid-row: 6 / 8;
+      }
+      /* Los tres paneles de la derecha son bajos: título y cuerpo compactos */
+      .panel--webapi .panel__titulo,
+      .panel--micro .panel__titulo,
+      .panel--macro .panel__titulo {
+        padding-top: 10px;
+        padding-bottom: 10px;
+        font-size: 20px;
+        letter-spacing: 0.08em;
+        white-space: nowrap;
+      }
+      .panel--webapi .panel__cuerpo,
+      .panel--micro .panel__cuerpo,
+      .panel--macro .panel__cuerpo {
+        padding-top: 12px;
+        padding-bottom: 12px;
+      }
+      .panel--consola .panel__titulo {
+        padding-top: 10px;
+        padding-bottom: 10px;
+      }
+      .panel--consola .panel__cuerpo {
+        padding-top: 12px;
+        padding-bottom: 12px;
+      }
+      .panel--consola .consola {
+        line-height: 1.5;
       }
 
       /* Barra del Event Loop: título a la izquierda, anillo girando a la derecha */
@@ -121,7 +166,7 @@
 
           <section class="panel panel--webapi">
             <div class="panel__titulo">
-              MACROTASKS <span style="opacity: 0.6">(Web APIs)</span>
+              Web APIs <span style="opacity: 0.6">(timer contando)</span>
             </div>
             <div class="panel__cuerpo">
               <div class="item item--webapi" id="w-timer" style="--i: 0">
@@ -131,9 +176,17 @@
             </div>
           </section>
 
+          <!-- Vacío en este ejemplo: se mantiene para que la UI sea la misma en todos -->
+          <section class="panel panel--micro">
+            <div class="panel__titulo">
+              Microtask Queue <span style="opacity: 0.6">(Promises)</span>
+            </div>
+            <div class="panel__cuerpo"></div>
+          </section>
+
           <section class="panel panel--macro">
             <div class="panel__titulo">
-              MICROTASKS <span style="opacity: 0.6">(Promises)</span>
+              Macrotask Queue <span style="opacity: 0.6">(Web APIs)</span>
             </div>
             <div class="panel__cuerpo">
               <div class="item item--macro" id="q-cb" style="--i: 0">
