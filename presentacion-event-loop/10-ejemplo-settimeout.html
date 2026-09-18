@@ -19,10 +19,11 @@
 
     /* Barra del Event Loop: título a la izquierda, anillo girando a la derecha */
     .panel--loop { position: relative; }
-    .panel--loop .panel__titulo { border-bottom: none; height: 100%; font-size: 26px; padding-right: 80px; }
+    .panel--loop .panel__titulo { border-bottom: none; height: 100%; font-size: 26px; padding-right: 140px; }
     .panel--loop .panel__titulo span { margin-right: auto; }   /* texto a la izquierda, anillo a la derecha */
-    .panel--loop .event-loop { position: absolute; top: 50%; right: 60px; width: 64px; height: 64px; transform: translateY(-50%); }
+    .panel--loop .event-loop { position: absolute; top: 50%; right: 60px; width: 64px; height: 64px; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; }
     .panel--loop .event-loop__anillo { border-width: 6px; }
+    .panel--loop .event-loop__ciclo { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; color: rgba(255, 255, 255, 0.5); text-transform: uppercase; }
 
   </style>
 </head>
@@ -57,7 +58,10 @@
       <section class="panel panel--loop">
         <div class="panel__titulo">
           <span>Event Loop · orquesta todo</span>
-          <div class="event-loop" id="loop"><div class="event-loop__anillo" id="anillo"></div></div>
+          <div class="event-loop" id="loop">
+            <div class="event-loop__anillo" id="anillo"></div>
+            <div class="event-loop__ciclo" id="ciclo">Ciclo 1</div>
+          </div>
         </div>
       </section>
 
@@ -73,7 +77,7 @@
       </section>
 
       <section class="panel panel--webapi">
-        <div class="panel__titulo">Web APIs</div>
+        <div class="panel__titulo">MicroTask Queue <span style="opacity: 0.6;">(Web APIs)</span></div>
         <div class="panel__cuerpo">
           <div class="item item--webapi" id="w-timer" style="--i: 0">
             <span>timer · cb</span><span class="temporizador" id="w-tiempo">0 ms</span>
@@ -82,7 +86,7 @@
       </section>
 
       <section class="panel panel--macro">
-        <div class="panel__titulo">Macrotask Queue</div>
+        <div class="panel__titulo">Macrotask Queue <span style="opacity: 0.6;">(Promises)</span></div>
         <div class="panel__cuerpo">
           <div class="item item--macro" id="q-cb" style="--i: 0"><span>cb</span></div>
         </div>
@@ -141,6 +145,7 @@
   }
 
   tl.addLabel('inicio');
+  tl.call(() => { $('ciclo').textContent = 'Ciclo 1'; });
   esperar(tl, DUR.margen);
 
   // 1) console.log("A") → imprime A
@@ -168,6 +173,7 @@
 
   // 5) Stack vacío: el event loop mueve el callback de la cola al stack
   tl.addLabel('stack-vacio');
+  tl.call(() => { $('ciclo').textContent = 'Ciclo 2'; }, null, '<');
   resaltarLinea(tl, null);
   tl.to(loop, { scale: 1.2, duration: DUR.rapida, repeat: 1, yoyo: true, ease: 'sine.inOut' });
   desencolar(tl, $('q-cb'));
