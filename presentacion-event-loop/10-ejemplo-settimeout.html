@@ -14,7 +14,7 @@
        Queue a la derecha; Consola abajo a lo ancho. */
       .runtime {
         grid-template-columns: 1fr 1fr;
-        grid-template-rows: 110px 1fr 1fr 250px;
+        grid-template-rows: 110px 1fr 1fr 1fr 250px;
       }
       .panel--loop {
         grid-column: 1 / 3;
@@ -22,8 +22,18 @@
       .panel--stack {
         grid-row: 2 / 4;
       }
+      .panel--webapi {
+        grid-row: 2 / 4;
+      }
+      .panel--macro {
+        grid-row: 4;
+      }
+      .panel--micro {
+        grid-row: 4;
+      }
       .panel--consola {
         grid-column: 1 / 3;
+        grid-row: 5;
       }
 
       /* Barra del Event Loop: título a la izquierda, anillo girando a la derecha */
@@ -121,7 +131,7 @@
 
           <section class="panel panel--webapi">
             <div class="panel__titulo">
-              MicroTask Queue <span style="opacity: 0.6">(Web APIs)</span>
+              Web APIs
             </div>
             <div class="panel__cuerpo">
               <div class="item item--webapi" id="w-timer" style="--i: 0">
@@ -133,12 +143,20 @@
 
           <section class="panel panel--macro">
             <div class="panel__titulo">
-              Macrotask Queue <span style="opacity: 0.6">(Promises)</span>
+              Macrotask Queue
             </div>
             <div class="panel__cuerpo">
               <div class="item item--macro" id="q-cb" style="--i: 0">
                 <span>cb</span>
               </div>
+            </div>
+          </section>
+
+          <section class="panel panel--micro">
+            <div class="panel__titulo">
+              Microtask Queue <span style="opacity: 0.6">(Promises)</span>
+            </div>
+            <div class="panel__cuerpo">
             </div>
           </section>
 
