@@ -19,12 +19,12 @@
 
     /* Barra del Event Loop: título a la izquierda, anillo girando a la derecha */
     .panel--loop { position: relative; }
-    .panel--loop .panel__titulo { border-bottom: none; height: 100%; font-size: 26px; display: flex; align-items: center; padding-right: 90px; }
-    .panel--loop .panel__titulo span { margin-right: auto; }   /* texto a la izquierda, anillo a la derecha */
-    .panel--loop .event-loop__grupo { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .panel--loop .panel__titulo { border-bottom: none; height: 100%; font-size: 26px; display: flex; align-items: center; }
+    .panel--loop .panel__titulo span { margin-right: auto; }
+    .panel--loop .event-loop__grupo { position: absolute; right: 24px; top: 50%; transform: translateY(-50%); display: flex; align-items: center; gap: 12px; }
     .panel--loop .event-loop { width: 64px; height: 64px; }
     .panel--loop .event-loop__anillo { border-width: 6px; }
-    .panel--loop .event-loop__ciclo { font-size: 12px; font-weight: 700; letter-spacing: 0.08em; color: #f2f2f2; text-transform: uppercase; white-space: nowrap; }
+    .panel--loop .event-loop__ciclo { font-size: 18px; font-weight: 700; letter-spacing: -0.01em; color: #f2f2f2; }
 
   </style>
 </head>
@@ -59,10 +59,10 @@
       <section class="panel panel--loop">
         <div class="panel__titulo">
           <span>Event Loop · orquesta todo</span>
-          <div class="event-loop__grupo" id="grupoLoop">
-            <div class="event-loop__ciclo" id="ciclo">Ciclo 1</div>
-            <div class="event-loop" id="loop"><div class="event-loop__anillo" id="anillo"></div></div>
-          </div>
+        </div>
+        <div class="event-loop__grupo" id="grupoLoop">
+          <div class="event-loop__ciclo" id="ciclo">Ciclo 1</div>
+          <div class="event-loop" id="loop"><div class="event-loop__anillo" id="anillo"></div></div>
         </div>
       </section>
 
