@@ -60,9 +60,11 @@ function configurarControles(tl, infinita = true) {
 
   if (infinita) {
     tl.repeat(-1);
+    // Inicia automáticamente si es infinita
+    tl.play();
+  } else {
+    tl.pause(0);
   }
-
-  tl.pause(0);
 
   // Devuelve los tiempos de todos los labels ordenados de menor a mayor
   const tiemposLabels = () => Object.values(tl.labels).sort((a, b) => a - b);
@@ -106,25 +108,30 @@ function configurarControles(tl, infinita = true) {
 
 /* ---------- 4b. Navegación entre animaciones ----------
    configurarNavegacion() agrega botones "Anterior" y "Siguiente" para navegar
-   entre las 10 animaciones de la presentación Event Loop. Espera que haya
-   archivos nombrados 01-*.html a 10-*.html en la carpeta presentacion-event-loop. */
+   entre las 10 animaciones de la presentación Event Loop. */
 function configurarNavegacion() {
+  const archivos = [
+    '01-single-thread.html',
+    '02-sincrono.html',
+    '03-event-loop-callbacks.html',
+    '04-call-stack.html',
+    '05-event-loop.html',
+    '06-web-apis.html',
+    '07-web-apis-categorias.html',
+    '08-macrotask-queue.html',
+    '09-microtask-queue.html',
+    '10-ejemplo-settimeout.html'
+  ];
+
   const url = new URL(window.location);
   const path = url.pathname;
   const nombreArchivo = path.split('/').pop();
 
-  // Extrae el número (01-10) del nombre del archivo
-  const match = nombreArchivo.match(/^(\d+)-/);
-  if (!match) return; // No es un archivo de animación numerado
-
-  const numeroActual = parseInt(match[1], 10);
-  const nombreBase = nombreArchivo.slice(3); // Quita el número y el guión
+  const numeroActual = archivos.indexOf(nombreArchivo) + 1;
+  if (numeroActual === 0) return; // No es un archivo conocido
 
   const numeroAnterior = numeroActual - 1;
   const numeroSiguiente = numeroActual + 1;
-
-  // Solo navegar dentro del rango 1-10
-  if (numeroAnterior < 1 && numeroSiguiente > 10) return;
 
   const nav = document.createElement('nav');
   nav.className = 'animacion-nav';
@@ -132,15 +139,13 @@ function configurarNavegacion() {
   let html = '<div class="animacion-nav__contenedor">';
 
   if (numeroAnterior >= 1) {
-    const pad = String(numeroAnterior).padStart(2, '0');
-    html += `<a href="${pad}-${nombreBase}" class="animacion-nav__boton animacion-nav__anterior">← Anterior</a>`;
+    html += `<a href="${archivos[numeroAnterior - 1]}" class="animacion-nav__boton animacion-nav__anterior">← Anterior</a>`;
   }
 
   html += `<span class="animacion-nav__numero">${String(numeroActual).padStart(2, '0')}/10</span>`;
 
   if (numeroSiguiente <= 10) {
-    const pad = String(numeroSiguiente).padStart(2, '0');
-    html += `<a href="${pad}-${nombreBase}" class="animacion-nav__boton animacion-nav__siguiente">Siguiente →</a>`;
+    html += `<a href="${archivos[numeroSiguiente - 1]}" class="animacion-nav__boton animacion-nav__siguiente">Siguiente →</a>`;
   }
 
   html += '</div>';
