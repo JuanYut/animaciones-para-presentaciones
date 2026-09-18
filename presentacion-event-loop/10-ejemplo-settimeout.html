@@ -40,28 +40,27 @@
       .panel--loop .panel__titulo span {
         margin-right: auto;
       }
-      .panel--loop .event-loop__grupo {
+      .panel--loop .event-loop__ciclo {
         position: absolute;
-        right: 64px;
+        right: 100px;
         top: 50%;
         transform: translateY(-50%);
-        display: flex;
-        align-items: center;
-        gap: 62px;
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        color: #f2f2f2;
+        white-space: nowrap;
       }
       .panel--loop .event-loop {
+        position: absolute;
+        right: 24px;
+        top: 50%;
+        transform: translateY(-50%);
         width: 64px;
         height: 64px;
       }
       .panel--loop .event-loop__anillo {
         border-width: 6px;
-      }
-      .panel--loop .event-loop__ciclo {
-        font-size: 18px;
-        font-weight: 700;
-        letter-spacing: -0.01em;
-        color: #f2f2f2;
-        margin-right: 40px;
       }
     </style>
   </head>
@@ -95,11 +94,9 @@
             <div class="panel__titulo">
               <span>Event Loop · orquesta todo</span>
             </div>
-            <div class="event-loop__grupo" id="grupoLoop">
-              <div class="event-loop__ciclo" id="ciclo">Ciclo 1</div>
-              <div class="event-loop" id="loop">
-                <div class="event-loop__anillo" id="anillo"></div>
-              </div>
+            <div class="event-loop__ciclo" id="ciclo">Ciclo 1</div>
+            <div class="event-loop" id="loop">
+              <div class="event-loop__anillo" id="anillo"></div>
             </div>
           </section>
 
