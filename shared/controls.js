@@ -45,17 +45,22 @@ window.addEventListener('resize', ajustarEscenario);
 ajustarEscenario();
 
 /* ---------- 3. Controles de teclado ----------
-   configurarControles(tl) recibe la timeline principal de GSAP y agrega:
+   configurarControles(tl, infinita) recibe la timeline principal de GSAP y agrega:
 
      Espacio  → play / pausa (si terminó, vuelve a empezar)
      R        → volver al inicio (queda en pausa, lista para grabar)
      →  /  ←  → saltar al siguiente / anterior label de la timeline
      H        → mostrar / ocultar la ayuda
 
+   Si infinita === true, la animación se reproduce en bucle infinito.
    La timeline arranca en pausa: nada se mueve hasta pulsar Espacio. */
-function configurarControles(tl) {
+function configurarControles(tl, infinita = true) {
   const ayuda = document.querySelector('.ayuda');
   const pista = document.querySelector('.pista');
+
+  if (infinita) {
+    tl.repeat(-1);
+  }
 
   tl.pause(0);
 
@@ -97,6 +102,50 @@ function configurarControles(tl) {
         break;
     }
   });
+}
+
+/* ---------- 4b. Navegación entre animaciones ----------
+   configurarNavegacion() agrega botones "Anterior" y "Siguiente" para navegar
+   entre las 10 animaciones de la presentación Event Loop. Espera que haya
+   archivos nombrados 01-*.html a 10-*.html en la carpeta presentacion-event-loop. */
+function configurarNavegacion() {
+  const url = new URL(window.location);
+  const path = url.pathname;
+  const nombreArchivo = path.split('/').pop();
+
+  // Extrae el número (01-10) del nombre del archivo
+  const match = nombreArchivo.match(/^(\d+)-/);
+  if (!match) return; // No es un archivo de animación numerado
+
+  const numeroActual = parseInt(match[1], 10);
+  const nombreBase = nombreArchivo.slice(3); // Quita el número y el guión
+
+  const numeroAnterior = numeroActual - 1;
+  const numeroSiguiente = numeroActual + 1;
+
+  // Solo navegar dentro del rango 1-10
+  if (numeroAnterior < 1 && numeroSiguiente > 10) return;
+
+  const nav = document.createElement('nav');
+  nav.className = 'animacion-nav';
+
+  let html = '<div class="animacion-nav__contenedor">';
+
+  if (numeroAnterior >= 1) {
+    const pad = String(numeroAnterior).padStart(2, '0');
+    html += `<a href="${pad}-${nombreBase}" class="animacion-nav__boton animacion-nav__anterior">← Anterior</a>`;
+  }
+
+  html += `<span class="animacion-nav__numero">${String(numeroActual).padStart(2, '0')}/10</span>`;
+
+  if (numeroSiguiente <= 10) {
+    const pad = String(numeroSiguiente).padStart(2, '0');
+    html += `<a href="${pad}-${nombreBase}" class="animacion-nav__boton animacion-nav__siguiente">Siguiente →</a>`;
+  }
+
+  html += '</div>';
+  nav.innerHTML = html;
+  document.body.appendChild(nav);
 }
 
 /* ---------- 4. Utilidades de escena ----------
